@@ -6,11 +6,11 @@ toc: true
 Here are some Frequently asked questions:
 
 ### Is the software safe?
-Yes, you can check every line of code. I always recommend compiling it yourself, as there are well-documented steps for doing so. (https://isaaclins/YetAnotherDiscordBotnet/compile) If you got the software from somewhere else, it's most likely malicious, and I do not recommend using anything other than this repository:
+Yes, you can check every line of code. I always recommend compiling it yourself, as there are well-documented steps for doing so. (https://isaaclins/YADRMS/compile) If you got the software from somewhere else, it's most likely malicious, and I do not recommend using anything other than this repository:
 <br>
 <br>
 
-{{< card link="https://github.com/isaaclins/YetAnotherDiscordBotnet" title="Repository" icon="question-mark-circle" >}}
+{{< card link="https://github.com/isaaclins/YADRMS" title="Repository" icon="question-mark-circle" >}}
 <br>
 <br>
 <hr> 

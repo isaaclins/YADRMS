@@ -32,7 +32,7 @@ menu:
         type: search
     - name: GitHub
       weight: 5
-      url: "https://github.com/isaaclins/YetAnotherDiscordBotnet"
+      url: "https://github.com/isaaclins/YADRMS"
       params:
         icon: github
     - name: Discord
@@ -47,7 +47,7 @@ params:
     type: giscus
 
     giscus:
-      repo: isaaclins/YetAnotherDiscordBotnet
+      repo: isaaclins/YADRMS
       repoId: R_kgDOM6Q1Vg
       category: <category>
       categoryId: DIC_kwDOM6Q1Vs4ClVwR

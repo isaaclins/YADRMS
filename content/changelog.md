@@ -5,7 +5,7 @@ toc: true
 
 # Changelog
 
-Stay updated with the latest changes in the YetAnotherDiscordBotnet project.
+Stay updated with the latest changes in the YADRMS project.
 This is an Automated process which takes the latest commit message and overwrites it to the bottom of this page.
 
 
@@ -143,7 +143,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-26
 
- d0f6bb0 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ d0f6bb0 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -159,7 +159,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
  22bfae5 refactor: remove unused register and errors props from TemplatePage component
 
- d0f6bb0 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ d0f6bb0 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -207,7 +207,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-26
 
- 4561794 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 4561794 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  845d36f fix(deps): update dependency axios to v1.8.0
 
@@ -225,7 +225,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
  2f179a0 fix: remove unnecessary whitespace in page.tsx
 
- 4561794 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 4561794 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -281,7 +281,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
  2d89c13 docs: remove unnecessary blank line in README
 
- d8f531d Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ d8f531d Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -393,7 +393,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-24
 
- 30c6297 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 30c6297 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  d6e8d25 fix(deps): update dependency @hookform/resolvers to v4.1.2 (#191)
 
@@ -401,7 +401,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-24
 
- 30c6297 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 30c6297 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  5a49378 Merge pull request #190 from isaaclins/renovate/tailwind-merge-3.x-lockfile
 
@@ -793,7 +793,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-20
 
- a1dfdbb Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ a1dfdbb Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  c9677bd Merge pull request #172 from isaaclins/renovate/actions-checkout-4.x
 
@@ -1011,7 +1011,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
  4eb52b1 fix(tests): ensure output format for test file listing is consistent
 
- fc5c353 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ fc5c353 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -1021,7 +1021,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
  e2b1771 feat(tests): implement dynamic test file listing and matrix strategy for test execution
 
- fc5c353 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ fc5c353 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
 
 
@@ -1195,7 +1195,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-19
 
- 0007f57 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 0007f57 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  eee3e9b fix(tests): update test output handling to use environment variable
 
@@ -1203,7 +1203,7 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-02-19
 
- 0007f57 Merge branch 'code' of https://github.com/isaaclins/YetAnotherDiscordBotnet into code
+ 0007f57 Merge branch 'code' of https://github.com/isaaclins/YADRMS into code
 
  558016c Merge pull request #164 from isaaclins/renovate/tailwind-merge-3.x
 

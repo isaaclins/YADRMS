@@ -6,7 +6,7 @@ toc: false
 
 # Legal Information
 
-Please read the following legal information carefully before using the YetAnotherDiscordBotnet project.
+Please read the following legal information carefully before using the YADRMS project.
 
 ## Terms of Use
 
