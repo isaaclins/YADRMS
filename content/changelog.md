@@ -9,6 +9,18 @@ Stay updated with the latest changes in the YADRMS project.
 This is an Automated process which takes the latest commit message and overwrites it to the bottom of this page.
 
 
+## 2025-03-06
+
+ 0c23b39 fix(deps): update playwright monorepo to v1.51.0 (#214)
+
+
+
+## 2025-03-07
+
+ 3d5555d fix(deps): update dependency axios to v1.8.2 (#215)
+
+
+
 ## 2025-03-05
 
  a1c33a1 chore: rename project for better goal understanding
