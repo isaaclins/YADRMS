@@ -9,6 +9,16 @@ Stay updated with the latest changes in the YADRMS project.
 This is an Automated process which takes the latest commit message and overwrites it to the bottom of this page.
 
 
+## 2025-03-07
+
+ 16bac4b fix(deps): update dependency lucide-react to ^0.479.0
+
+ 3d5555d fix(deps): update dependency axios to v1.8.2 (#215)
+
+ e9d7014 Merge pull request #216 from isaaclins/renovate/lucide-monorepo
+
+
+
 ## 2025-03-06
 
  0c23b39 fix(deps): update playwright monorepo to v1.51.0 (#214)
