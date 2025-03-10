@@ -9,6 +9,14 @@ Stay updated with the latest changes in the YADRMS project.
 This is an Automated process which takes the latest commit message and overwrites it to the bottom of this page.
 
 
+## 2025-03-10
+
+ 6546f94 feat(api): enhance save settings API with directory existence check and improved error handling
+
+ df124aa feat(BuilderUI): add save settings and compile functionality with API integration
+
+
+
 ## 2025-03-08
 
  09f3103 chore(deps): update dependency eslint to v9.22.0 (#217)
