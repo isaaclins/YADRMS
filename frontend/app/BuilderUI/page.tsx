@@ -22,7 +22,27 @@ const BotnetCustomizer = () => {
     modules: {},
   });
 
-  // Step 1: Fetch modules based on language
+  const [languages, setLanguages] = useState<string[]>([]);
+
+  // Fetch languages dynamically from the backend
+  const fetchLanguages = async () => {
+    try {
+      const response = await fetch("/api/languages", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const languagesList = await response.json();
+      setLanguages(languagesList);
+      // If the current language is not in the list, update it
+      if (!languagesList.includes(botData.language) && languagesList.length > 0) {
+        setBotData((prev) => ({ ...prev, language: languagesList[0] }));
+      }
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+    }
+  };
+
+  // Fetch modules based on language
   const fetchModules = async (language: string) => {
     try {
       const response = await fetch("/api/modules", {
@@ -31,8 +51,7 @@ const BotnetCustomizer = () => {
         body: JSON.stringify({ language }),
       });
       const moduleList = await response.json();
-
-      // Step 2: Dynamically create modules object
+      // Dynamically create modules object
       const modules = createModules(moduleList);
       setBotData((prev) => ({ ...prev, modules }));
     } catch (error) {
@@ -40,15 +59,20 @@ const BotnetCustomizer = () => {
     }
   };
 
-  // Step 3: Simplify logic to create modules
+  // Create a modules object from moduleList
   const createModules = (moduleList: string[]) =>
-    moduleList.reduce(
-      (acc, mod) => ({ ...acc, [mod]: false }),
-      {}
-    );
+    moduleList.reduce((acc, mod) => ({ ...acc, [mod]: false }), {});
 
+  // Fetch languages on component mount
   useEffect(() => {
-    fetchModules(botData.language);
+    fetchLanguages();
+  }, []);
+
+  // Fetch modules whenever the selected language changes
+  useEffect(() => {
+    if (botData.language) {
+      fetchModules(botData.language);
+    }
   }, [botData.language]);
 
   // Handle input changes
@@ -87,9 +111,11 @@ const BotnetCustomizer = () => {
             onChange={handleSelectChange}
             className="w-full bg-gray-800 text-white p-2 rounded-md"
           >
-            <option value="python">python</option>
-            <option value="go">go</option>
-            <option value="java">java</option>
+            {languages.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
           </select>
 
           <Label>Token</Label>
