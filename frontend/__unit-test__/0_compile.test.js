@@ -9,7 +9,7 @@ const URL = 'http://localhost:3000/api/compile';
  */
 
 describe('Compile Unit Test', function () {
-    this.timeout(10000); // Set global timeout to 10 seconds
+    this.timeout(10000);
     it('should return 200 OK', async function () {
         try {
             const response = await axios.post(URL, {

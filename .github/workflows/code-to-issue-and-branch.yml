@@ -96,7 +96,6 @@ jobs:
               return { issue_number: "", issue_title: "" };
             }
 
-            // Sanitize issue title for branch naming
             const sanitizedTitle = issueTitle.replace(/[^a-zA-Z0-9]+/g, '_');
             const branchName = `issue-${issueNumber}-${sanitizedTitle}`;
             console.log(`Creating branch: ${branchName}`);

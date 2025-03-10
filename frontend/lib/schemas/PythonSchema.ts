@@ -1,4 +1,4 @@
-// [lib/schemas/PythonSchema.ts]
+// [frontend/lib/schemas/PythonSchema.ts]
 import { z } from "zod";
 
 export const fields = {

@@ -19,9 +19,6 @@ export default function Home() {
    * 
    */
   const handleAgree = () => {
-    // Save the agreement to the user's profile
-    // For now, just redirect to the Builder UI
-
     router.push("/BuilderUI");
   };
 

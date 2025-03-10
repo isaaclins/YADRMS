@@ -2,10 +2,10 @@ const axios = require('axios');
 const { describe, it } = require('mocha');
 const { expect } = require('chai');
 
-const URL = 'http://localhost:3000/api/save-settings'; // Update the URL
+const URL = 'http://localhost:3000/api/save-settings';
 
 describe('Server Response Test', function () {
-    this.timeout(10000); // Set global timeout to 10 seconds
+    this.timeout(10000);
 
     it('should return 200 OK', async function () {
         try {
@@ -59,7 +59,6 @@ describe('Server Response Test', function () {
     it('should return 500 Internal Server Error for server issues', async function () {
         try {
             const response = await axios.post(URL, {
-                // Simulate server error by sending data that causes an error
                 BotData: {
                     Token: "this is an example for the settings.json file",
                     GuildID: "this is an example for the settings.json file",
@@ -81,7 +80,7 @@ describe('Server Response Test', function () {
                     WallpaperChanger: false,
                     TTS: false
                 },
-                causeError: true // This will trigger the server error
+                causeError: true 
             });
             expect(response.status).to.equal(500);
             console.log('✅ Test Passed: Server responded with 500 Internal Server Error');

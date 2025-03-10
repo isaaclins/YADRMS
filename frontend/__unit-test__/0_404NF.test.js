@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const URL = 'http://localhost:3000/404NF';
 
 describe('404 Server Response Test', function () {
-    this.timeout(10000); // Set global timeout to 10 seconds
+    this.timeout(10000);
     it('should return 404 NOT FOUND', async function () {
         try {
             await axios.get(URL);

@@ -7,7 +7,7 @@ const endpoints = ['/', '/BuilderUI'];
 
 
 describe('200 Server Response Test', function () {
-    this.timeout(10000); // Set global timeout to 10 seconds
+    this.timeout(10000);
 
     endpoints.forEach((endpoint) => {
         it(`should return 200 OK for ${endpoint}`, async function () {
