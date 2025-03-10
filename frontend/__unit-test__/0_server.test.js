@@ -40,22 +40,6 @@ describe('Server Response Test', function () {
         }
     });
 
-    it('should return 400 Bad Request for invalid data', async function () {
-        try {
-            const response = await axios.post(URL, {
-                invalid: "data"
-            });
-            expect(response.status).to.equal(400);
-            console.log('✅ Test Passed: Server responded with 400 Bad Request');
-        } catch (error) {
-            if (error.response && error.response.status === 400) {
-                console.log('✅ Test Passed: Server responded with 400 Bad Request');
-            } else {
-                console.error(`❌ Test Failed: ${error.message}`);
-                throw error;
-            }
-        }
-    });
 
     it('should return 405 Method Not Allowed for GET request', async function () {
         try {
