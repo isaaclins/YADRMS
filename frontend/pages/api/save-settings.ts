@@ -28,6 +28,11 @@ export default async function handler(
   }
 
   try {
+    // If causeError flag is present, force an error to simulate server issues
+    if (req.body.causeError) {
+      throw new Error("Forced error for testing");
+    }
+
     // Convert the request body to a formatted JSON string
     const settingsData = JSON.stringify(req.body, null, 2);
     console.log("Saving settings to:", SETTINGS_FILE_PATH);
