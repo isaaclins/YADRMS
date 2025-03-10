@@ -13,6 +13,14 @@ This is an Automated process which takes the latest commit message and overwrite
 
  4fc9943 feat(api): add error simulation for testing in save settings handler
 
+ bd7657b feat(BuilderUI): rename BotnetCustomizer to ClientCustomizer and update related text
+
+
+
+## 2025-03-10
+
+ 4fc9943 feat(api): add error simulation for testing in save settings handler
+
  9f13dcb feat(BuilderUI): remove redundant Test button from BotnetCustomizer component
 
 
