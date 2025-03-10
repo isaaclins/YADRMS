@@ -9,6 +9,18 @@ Stay updated with the latest changes in the YADRMS project.
 This is an Automated process which takes the latest commit message and overwrites it to the bottom of this page.
 
 
+## 2025-03-08
+
+ 09f3103 chore(deps): update dependency eslint to v9.22.0 (#217)
+
+
+
+## 2025-03-10
+
+ 0f55e83 fix(scripts): rename 'next' script to 'dev' for clarity
+
+
+
 ## 2025-03-07
 
  e9d7014 Merge pull request #216 from isaaclins/renovate/lucide-monorepo
