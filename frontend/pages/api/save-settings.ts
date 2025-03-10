@@ -2,35 +2,50 @@ import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 
+// Define constants for directory and file paths
+const SETTINGS_DIR = path.join(process.cwd(), "../backend/settings");
+const SETTINGS_FILE = "settings.json";
+const SETTINGS_FILE_PATH = path.join(SETTINGS_DIR, SETTINGS_FILE);
+
+/**
+ * Ensures that the provided directory exists.
+ * If not, creates the directory (and any necessary parent directories).
+ * @param dirPath - The directory path to check or create.
+ */
+const ensureDirectoryExists = (dirPath: string): void => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === "POST") {
-    try {
-      const datajson = JSON.stringify(req.body, null, 2);
-      const dirPath = path.join(process.cwd(), "../backend/settings");
-      const filePath = path.join(dirPath, "settings.json");
-      console.log("Saving settings to:", filePath);
-      console.log("Settings data:", datajson);
+  // Early return if method is not POST
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed." });
+  }
 
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true });
+  try {
+    // Convert the request body to a formatted JSON string
+    const settingsData = JSON.stringify(req.body, null, 2);
+    console.log("Saving settings to:", SETTINGS_FILE_PATH);
+    console.log("Settings data:", settingsData);
+
+    // Ensure the settings directory exists
+    ensureDirectoryExists(SETTINGS_DIR);
+
+    // Write the settings data to the file
+    fs.writeFile(SETTINGS_FILE_PATH, settingsData, (writeError) => {
+      if (writeError) {
+        console.error("Error writing file:", writeError.message);
+        return res.status(500).json({ message: "Failed to save settings." });
       }
-
-      fs.writeFile(filePath, datajson, (err) => {
-        if (err) {
-          console.error("Error writing file:", err.message);
-          res.status(500).json({ message: "Failed to save settings." });
-          return;
-        }
-        res.status(200).json({ message: "Settings saved successfully." });
-      });
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      res.status(500).json({ message: "Internal server error." });
-    }
-  } else {
-    res.status(405).json({ message: "Method not allowed." });
+      return res.status(200).json({ message: "Settings saved successfully." });
+    });
+  } catch (error) {
+    console.error("Error saving settings:", error);
+    return res.status(500).json({ message: "Internal server error." });
   }
 }
