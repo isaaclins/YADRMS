@@ -18,13 +18,12 @@ const ClientCustomizer = () => {
   const [botData, setBotData] = useState<BotData>({
     token: "",
     guildID: "",
-    language: "python", // Default language set to "python"
+    language: "python",
     modules: {},
   });
 
   const [languages, setLanguages] = useState<string[]>([]);
 
-  // Fetch languages dynamically from the backend
   const fetchLanguages = async () => {
     try {
       const response = await fetch("/api/languages", {
@@ -33,7 +32,6 @@ const ClientCustomizer = () => {
       });
       const languagesList = await response.json();
       setLanguages(languagesList);
-      // If the current language is not in the list, update it
       if (!languagesList.includes(botData.language) && languagesList.length > 0) {
         setBotData((prev) => ({ ...prev, language: languagesList[0] }));
       }
@@ -42,7 +40,6 @@ const ClientCustomizer = () => {
     }
   };
 
-  // Fetch modules based on language
   const fetchModules = async (language: string) => {
     try {
       const response = await fetch("/api/modules", {
@@ -51,7 +48,6 @@ const ClientCustomizer = () => {
         body: JSON.stringify({ language }),
       });
       const moduleList = await response.json();
-      // Dynamically create modules object
       const modules = createModules(moduleList);
       setBotData((prev) => ({ ...prev, modules }));
     } catch (error) {
@@ -59,33 +55,27 @@ const ClientCustomizer = () => {
     }
   };
 
-  // Create a modules object from moduleList
   const createModules = (moduleList: string[]) =>
     moduleList.reduce((acc, mod) => ({ ...acc, [mod]: false }), {});
 
-  // Fetch languages on component mount
   useEffect(() => {
     fetchLanguages();
   }, []);
 
-  // Fetch modules whenever the selected language changes
   useEffect(() => {
     if (botData.language) {
       fetchModules(botData.language);
     }
   }, [botData.language]);
 
-  // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBotData({ ...botData, [e.target.name]: e.target.value });
   };
 
-  // Handle language selection change
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setBotData({ ...botData, language: e.target.value });
   };
 
-  // Handle checkbox change for module selection
   const handleCheckboxChange = (module: string) => {
     setBotData((prev) => ({
       ...prev,
@@ -93,7 +83,6 @@ const ClientCustomizer = () => {
     }));
   };
 
-  // Handle the "Save Settings" button click
   const handleSaveSettings = async () => {
     try {
       const response = await fetch("/api/save-settings/", {
@@ -111,7 +100,6 @@ const ClientCustomizer = () => {
     }
   };
 
-  // Handle the "Compile" button click
   const handleCompile = async () => {
     try {
       const response = await fetch("/api/compile/", {
