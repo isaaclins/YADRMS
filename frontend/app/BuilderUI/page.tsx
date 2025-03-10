@@ -1,47 +1,68 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-export default function BotnetCustomizer() {
-  interface BotData {
-    token: string;
-    guildID: string;
-    modules: { [key: string]: boolean };
-  }
 
+interface BotData {
+  token: string;
+  guildID: string;
+  language: string;
+  modules: { [key: string]: boolean };
+}
+
+const BotnetCustomizer = () => {
   const [botData, setBotData] = useState<BotData>({
     token: "",
     guildID: "",
+    language: "python", // Default language set to "python"
     modules: {},
   });
 
-  useEffect(() => {
-    async function fetchModules() { 
-        // this function will send the request with the language in the request body.
-        // the language will be dynamic and will be selected by the user using a dropdown and be saved as a variable.
-        // the response will be the modules available for the selected language.
-        // the response will be used to populate the modules object in the botData state.
-      try {
-        const response = await fetch("/api/modules");
-        const moduleList = await response.json();
-        const modules = moduleList.reduce((acc, mod) => ({ ...acc, [mod]: false }), {});
-        setBotData((prev) => ({ ...prev, modules }));
-      } catch (error) {
-        console.error("Error fetching modules:", error);
-      }
+  // Step 1: Fetch modules based on language
+  const fetchModules = async (language: string) => {
+    try {
+      const response = await fetch("/api/modules", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ language }),
+      });
+      const moduleList = await response.json();
+
+      // Step 2: Dynamically create modules object
+      const modules = createModules(moduleList);
+      setBotData((prev) => ({ ...prev, modules }));
+    } catch (error) {
+      console.error("Error fetching modules:", error);
     }
+  };
 
-    fetchModules();
-  }, []);
+  // Step 3: Simplify logic to create modules
+  const createModules = (moduleList: string[]) =>
+    moduleList.reduce(
+      (acc, mod) => ({ ...acc, [mod]: false }),
+      {}
+    );
 
-  const handleInputChange = (e) => {
+  useEffect(() => {
+    fetchModules(botData.language);
+  }, [botData.language]);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setBotData({ ...botData, [e.target.name]: e.target.value });
   };
 
-  const handleCheckboxChange = (module) => {
+  // Handle language selection change
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setBotData({ ...botData, language: e.target.value });
+  };
+
+  // Handle checkbox change for module selection
+  const handleCheckboxChange = (module: string) => {
     setBotData((prev) => ({
       ...prev,
       modules: { ...prev.modules, [module]: !prev.modules[module] },
@@ -60,18 +81,41 @@ export default function BotnetCustomizer() {
         <div className="space-y-3">
           <h3 className="text-lg font-semibold">BotData</h3>
           <Label>Language</Label>
-          <Input className="bg-gray-800 text-white" name="language" placeholder="Enter language" onChange={handleInputChange} />
+          <select
+            name="language"
+            value={botData.language}
+            onChange={handleSelectChange}
+            className="w-full bg-gray-800 text-white p-2 rounded-md"
+          >
+            <option value="python">python</option>
+            <option value="go">go</option>
+            <option value="java">java</option>
+          </select>
+
           <Label>Token</Label>
-          <Input className="bg-gray-800 text-white" name="token" placeholder="Enter token" onChange={handleInputChange} />
+          <Input
+            className="bg-gray-800 text-white"
+            name="token"
+            placeholder="Enter token"
+            onChange={handleInputChange}
+          />
           <Label>GuildID</Label>
-          <Input className="bg-gray-800 text-white" name="guildID" placeholder="Enter Guild ID" onChange={handleInputChange} />
+          <Input
+            className="bg-gray-800 text-white"
+            name="guildID"
+            placeholder="Enter Guild ID"
+            onChange={handleInputChange}
+          />
         </div>
 
         <div className="mt-4 space-y-2">
           <h3 className="text-lg font-semibold">Modules</h3>
           {Object.keys(botData.modules).map((module) => (
             <div key={module} className="flex items-center gap-2">
-              <Checkbox checked={!!botData.modules[module]} onCheckedChange={() => handleCheckboxChange(module)} />
+              <Checkbox
+                checked={!!botData.modules[module]}
+                onCheckedChange={() => handleCheckboxChange(module)}
+              />
               <Label>{module}</Label>
             </div>
           ))}
@@ -84,9 +128,13 @@ export default function BotnetCustomizer() {
 
         <div className="mt-6 p-4 bg-gray-800 rounded-lg">
           <h3 className="text-lg font-semibold">Live Data</h3>
-          <pre className="text-xs text-gray-300 overflow-auto">{JSON.stringify(botData, null, 2)}</pre>
+          <pre className="text-xs text-gray-300 overflow-auto">
+            {JSON.stringify(botData, null, 2)}
+          </pre>
         </div>
       </Card>
     </div>
   );
-}
+};
+
+export default BotnetCustomizer;
