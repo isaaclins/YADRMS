@@ -136,8 +136,6 @@ const BotnetCustomizer = () => {
         <p className="text-sm text-gray-400 mb-4">
           Customize and compile your very own Botnet.
         </p>
-        <Button className="bg-gray-700 text-white w-full mb-4">Test</Button>
-
         <div className="space-y-3">
           <h3 className="text-lg font-semibold">BotData</h3>
           <Label>Language</Label>
