@@ -14,7 +14,7 @@ interface BotData {
   modules: { [key: string]: boolean };
 }
 
-const BotnetCustomizer = () => {
+const ClientCustomizer = () => {
   const [botData, setBotData] = useState<BotData>({
     token: "",
     guildID: "",
@@ -132,9 +132,9 @@ const BotnetCustomizer = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-black text-white p-4">
       <Card className="w-full max-w-md bg-gray-900 rounded-2xl shadow-lg p-6">
-        <h2 className="text-xl font-bold">Botnet Customization</h2>
+        <h2 className="text-xl font-bold">Client Customization</h2>
         <p className="text-sm text-gray-400 mb-4">
-          Customize and compile your very own Botnet.
+          Customize and compile your very own Client.
         </p>
         <div className="space-y-3">
           <h3 className="text-lg font-semibold">BotData</h3>
@@ -201,4 +201,4 @@ const BotnetCustomizer = () => {
   );
 };
 
-export default BotnetCustomizer;
+export default ClientCustomizer;

@@ -40,7 +40,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ onSubmit, liveData, setLi
             });
 
             if (response.ok) {
-                toast("Compilation started", { description: "Your botnet is being compiled.", duration: 5000 });
+                toast("Compilation started", { description: "Your Client is being compiled.", duration: 5000 });
             } else {
                 toast("Compilation failed", { description: "There was an error starting the compilation.", duration: 5000 });
             }
@@ -79,7 +79,7 @@ const FormComponent: React.FC<FormComponentProps> = ({ onSubmit, liveData, setLi
                 <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
                     {renderFields(fields)}
                     <div className="flex justify-between">
-                        <Button variant="outline" type="submit" onClick={() => { toast("Your settings have been saved", { description: "You can now compile your Botnet!", duration: 5000, action: { label: "discard", onClick: () => console.log("discard"), }, }); }}>
+                        <Button variant="outline" type="submit" onClick={() => { toast("Your settings have been saved", { description: "You can now compile your Client!", duration: 5000, action: { label: "discard", onClick: () => console.log("discard"), }, }); }}>
                             Save Settings
                         </Button>
                         <Button variant="outline" type="button" onClick={handleCompile}>
