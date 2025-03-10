@@ -11,6 +11,14 @@ This is an Automated process which takes the latest commit message and overwrite
 
 ## 2025-03-10
 
+ 5c6e621 refactor(BuilderUI): clean up comments and improve readability in ClientCustomizer component refactor(api): streamline save settings handler by removing unnecessary comments
+
+ 76ff741 refactor(tests): remove redundant comments and clean up test files
+
+
+
+## 2025-03-10
+
  4fc9943 feat(api): add error simulation for testing in save settings handler
 
  bd7657b feat(BuilderUI): rename BotnetCustomizer to ClientCustomizer and update related text
