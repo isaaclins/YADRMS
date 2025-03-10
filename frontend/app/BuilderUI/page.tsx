@@ -93,6 +93,42 @@ const BotnetCustomizer = () => {
     }));
   };
 
+  // Handle the "Save Settings" button click
+  const handleSaveSettings = async () => {
+    try {
+      const response = await fetch("/api/save-settings/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(botData),
+      });
+      if (response.ok) {
+        console.log("Settings saved successfully!");
+      } else {
+        console.error("Failed to save settings.");
+      }
+    } catch (error) {
+      console.error("Error saving settings:", error);
+    }
+  };
+
+  // Handle the "Compile" button click
+  const handleCompile = async () => {
+    try {
+      const response = await fetch("/api/compile/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(botData),
+      });
+      if (response.ok) {
+        console.log("Compile request sent successfully!");
+      } else {
+        console.error("Failed to compile.");
+      }
+    } catch (error) {
+      console.error("Error during compile:", error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen bg-black text-white p-4">
       <Card className="w-full max-w-md bg-gray-900 rounded-2xl shadow-lg p-6">
@@ -148,8 +184,12 @@ const BotnetCustomizer = () => {
         </div>
 
         <div className="mt-6 flex gap-2">
-          <Button className="bg-gray-700 text-white flex-1">Save Settings</Button>
-          <Button className="bg-gray-700 text-white flex-1">Compile</Button>
+          <Button onClick={handleSaveSettings} className="bg-gray-700 text-white flex-1">
+            Save Settings
+          </Button>
+          <Button onClick={handleCompile} className="bg-gray-700 text-white flex-1">
+            Compile
+          </Button>
         </div>
 
         <div className="mt-6 p-4 bg-gray-800 rounded-lg">
