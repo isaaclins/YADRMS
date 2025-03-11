@@ -2,6 +2,7 @@
 id: client-script-generation
 title: Dynamic Client Script Generation
 description: How YADRMS generates client scripts dynamically.
+sidebar_position: 1
 ---
 
 # Dynamic Client Script Generation

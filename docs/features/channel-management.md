@@ -2,6 +2,7 @@
 id: channel-management
 title: Channel Management
 description: How YADRMS manages Discord channels.
+sidebar_position: 3
 ---
 
 # Channel Management

@@ -2,6 +2,7 @@
 id: dependency-management
 title: Dependency Management
 description: How Renovate keeps dependencies up-to-date.
+sidebar_position: 1
 ---
 
 # Dependency Management

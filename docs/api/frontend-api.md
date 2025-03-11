@@ -2,6 +2,7 @@
 id: frontend-api
 title: Frontend API & Integration
 description: (If applicable) How the frontend communicates with the backend.
+sidebar_position: 999
 ---
 
 # Frontend API & Integration

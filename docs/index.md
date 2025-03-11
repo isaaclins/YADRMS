@@ -3,6 +3,7 @@ id: home
 title: YADRMS Documentation
 slug: /
 description: Welcome to the YADRMS documentation.
+sidebar_position: 1
 ---
 
 # Welcome to YADRMS

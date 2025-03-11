@@ -2,6 +2,7 @@
 id: discord-bot-integration
 title: Discord Bot Integration
 description: How YADRMS integrates with Discord Bot API.
+sidebar_position: 2
 ---
 
 # Discord Bot Integration

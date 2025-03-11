@@ -2,6 +2,7 @@
 id: ci-cd
 title: CI/CD Pipelines
 description: How GitHub Actions are used for continuous integration and deployment.
+sidebar_position: 999
 ---
 
 # CI/CD Pipelines

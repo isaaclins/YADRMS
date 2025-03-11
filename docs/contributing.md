@@ -2,6 +2,7 @@
 id: contributing
 title: Contributing to YADRMS
 description: Guidelines and best practices for contributing to YADRMS.
+sidebar_position: 16
 ---
 
 # Contributing
