@@ -1,3 +1,9 @@
+---
+id: how-to-code
+title: How To Code
+description: Step-by-step instructions on how to code. Proudly made by Isaac
+sidebar_position: 1
+---
 # Tutorial on how to Code by Isaac
 
 ### **Original Code (Bad Example)**
@@ -16,7 +22,7 @@ def proc(u):
             else:
                 print(f"Total: {u.p}")
 ```
-> Let me guess, you understood ***shit***.
+> *Let me guess, you understood **jackshit**.*
 
 ---
 
@@ -33,7 +39,8 @@ def process_user(user):
         else:
             print(f"Total: {user.price}")
 ```
-> Wow! we can actually make sense of the code!
+> *Wow! We can actually make sense of the code!*
+
 ---
 
 ### **Step 2: Avoid Deep Nesting**
@@ -52,7 +59,8 @@ def process_user(user):
 
     print(f"Total: {discounted_price}")
 ```
-> This just makes it more readable. It makes it so the person reading your shit code does not get a memory leak from all the conditions he has to keep in mind.
+> *This makes it more readable. It ensures the person reading your code does not get overwhelmed by all the conditions.*
+
 ---
 
 ### **Step 3: Extract Shared Logic to Avoid Duplication**
@@ -71,7 +79,8 @@ def process_user(user):
     total_price = apply_discount(user.price)
     print(f"Total: {total_price}")
 ```
-> This eliminates duplication and makes it dynamic in the future. if the code has to be reused, it will be simpler, faster and more efficient.
+> *This eliminates duplication and makes it dynamic in the future. If the code has to be reused, it will be simpler, faster, and more efficient.*
+
 ---
 
 ### **Final Version (Clean Code)**
@@ -79,5 +88,23 @@ def process_user(user):
 ✅ **Uses clear, meaningful names**  
 ✅ **Avoids deep nesting with early returns**  
 ✅ **Extracts shared logic to eliminate duplication**  
+```python
+def apply_discount(price):
+    """Apply a 10% discount if the price is over 100."""
+    return price * 0.9 if price > 100 else price
 
+def process_user(user):
+    if not user or not user.is_active:
+        return  # Exit early if the user is invalid or inactive
+
+    total_price = apply_discount(user.price)
+    print(f"Total: {total_price}")
+```
 This refactored code is now **easier to read, maintain, and reuse**! 🚀
+
+For further clarification, look at this:
+
+
+[How to Never Nest](https://www.youtube.com/watch?v=CFRhGnuXG-4) by [CodeAesthetic](https://www.youtube.com/@CodeAesthetic)
+
+[How to Define Variables](https://www.youtube.com/watch?v=-J3wNP6u5YU) by [CodeAesthetic](https://www.youtube.com/@CodeAesthetic)
