@@ -2,7 +2,7 @@
 id: installation
 title: Installation Guide
 description: Step-by-step installation of YADRMS.
-sidebar_position: 999
+sidebar_position: 1
 ---
 
 # Installation

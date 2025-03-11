@@ -2,7 +2,7 @@
 id: configuration
 title: Configuration
 description: How to configure YADRMS after installation.
-sidebar_position: 999
+sidebar_position: 2
 ---
 
 # Configuration
