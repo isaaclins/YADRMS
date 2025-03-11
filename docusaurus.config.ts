@@ -42,21 +42,6 @@ const config: Config = {
           editUrl:
             'https://github.com/isaaclins/YADRMS/tree/main/',
         },
-        blog: {
-          showReadingTime: true,
-          feedOptions: {
-            type: ['rss', 'atom'],
-            xslt: true,
-          },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
-        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -78,11 +63,10 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Documentation',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/isaaclins/YADRMS',
           label: 'GitHub',
           position: 'right',
         },
@@ -114,6 +98,10 @@ const config: Config = {
             {
               label: 'AnotherAnother Author',
               href: 'https://example2.com/',
+            },          
+            {
+              label: 'AnotherAnotherAnother Author',
+              href: 'https://example2.com/',
             },
           ],
         },
@@ -131,7 +119,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} YADRMS, Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
