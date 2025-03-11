@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Intro
 
-Let's discover **Docusaurus in less than 5 minutes**.
+First of, I’d like to clarify some things. This project is a **PoC (Proof of Concept)**. I didn’t write the code for malicious intentions, but to see how far I can go with just my knowledge in Python and some help from friends.
 
 ## Getting Started
 
