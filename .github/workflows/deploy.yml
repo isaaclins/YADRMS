@@ -36,6 +36,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: './build'
-          # If your base URL is not the root of the repo, use this to specify the destination
-          # user_name: 'Your Name'
-          # user_email: 'your-email@example.com'
+
