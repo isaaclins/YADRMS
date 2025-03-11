@@ -1,0 +1,41 @@
+name: Deploy Docusaurus Site
+
+on:
+  push:
+    branches:
+      - main  # or the default branch you want to use for deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # or your preferred version of Node.js
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+          
+      # Build the Docusaurus site
+      - name: Build Docusaurus site
+        run: |
+          npm run build
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: './build'
+          # If your base URL is not the root of the repo, use this to specify the destination
+          # user_name: 'Your Name'
+          # user_email: 'your-email@example.com'
