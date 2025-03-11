@@ -1,8 +1,9 @@
 {
-  "name": "documentation",
-  "version": "0.0.0",
+  "name": "YADRMS documentation",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
+    "setup":"npm install && npm run start",
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
