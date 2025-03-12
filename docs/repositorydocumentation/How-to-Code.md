@@ -105,6 +105,6 @@ This refactored code is now **easier to read, maintain, and reuse**! 🚀
 For further clarification, look at this:
 
 
-[The 3 Laws of Writing Bug](https://www.youtube.com/watch?v=YMPlQCYp7xg) Free Code by [Kantan Coding](https://www.youtube.com/@kantancoding)
+[The 3 Laws of Writing Bug Free Code](https://www.youtube.com/watch?v=YMPlQCYp7xg) by [Kantan Coding](https://www.youtube.com/@kantancoding)
 
 [How to Define Variables](https://www.youtube.com/watch?v=-J3wNP6u5YU) by [CodeAesthetic](https://www.youtube.com/@CodeAesthetic)
