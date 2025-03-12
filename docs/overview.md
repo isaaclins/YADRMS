@@ -2,7 +2,7 @@
 id: overview
 title: Overview & Architecture
 description: An in-depth look at the YADRMS project and its design.
-sidebar_position: 2
+sidebar_position: 4
 ---
 
 # Overview
