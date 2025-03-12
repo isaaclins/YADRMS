@@ -105,6 +105,6 @@ This refactored code is now **easier to read, maintain, and reuse**! 🚀
 For further clarification, look at this:
 
 
-[How to Never Nest](https://www.youtube.com/watch?v=CFRhGnuXG-4) by [CodeAesthetic](https://www.youtube.com/@CodeAesthetic)
+[The 3 Laws of Writing Bug](https://www.youtube.com/watch?v=YMPlQCYp7xg) Free Code by [Kantan Coding](https://www.youtube.com/@kantancoding)
 
 [How to Define Variables](https://www.youtube.com/watch?v=-J3wNP6u5YU) by [CodeAesthetic](https://www.youtube.com/@CodeAesthetic)
