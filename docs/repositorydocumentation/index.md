@@ -1,3 +1,9 @@
+---
+id: documentation
+title: Repository Documentation
+description: Step-by-step overview on how the project is set up.
+sidebar_position: 1
+---
 # Repository Documentation
 
 Welcome to the repository documentation for the YADRMS project. This document provides an overview of the project, setup instructions, and guidelines for contributing.

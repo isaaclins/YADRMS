@@ -1,6 +1,6 @@
 {
   "label": "Repository Documentation",
-  "position": 99,
+  "position": 99, 
   "link": {
     "type": "generated-index",
     "description": "description of the category"
