@@ -35,3 +35,5 @@ go.work.sum
 frontend/browser/.tmp/auth_info.json
 /python/__pycache__
 python/settings.py
+node_modules/*
+.docusaurus/*
