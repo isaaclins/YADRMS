@@ -9,7 +9,6 @@ def get_code():
         return """
             # ADDED CLIPBOARD MODULE
             elif message.content.lower() == ".clipboard":
-                installModuleIfMissing("pyperclip")
                 parts = message.content.split()
                 option = parts[1] if len(parts) > 1 else None
                 if option == "add":
