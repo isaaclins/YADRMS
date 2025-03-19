@@ -85,7 +85,7 @@ else:
     print("All modules installed successfully.")
 """
 discord_code = """
-
+import discord
 # Initialize global variables
 intents = discord.Intents.all()
 intents.members = True
