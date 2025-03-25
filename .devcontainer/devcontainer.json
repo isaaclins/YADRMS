@@ -1,0 +1,121 @@
+{
+    "name": "My Codespace",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+            "be5invis.vscode-custom-css",
+            "catppuccin.catppuccin-vsc",
+            "chadalen.vscode-jetbrains-icon-theme",
+            "dwtexe.cursor-stats",
+            "esbenp.prettier-vscode",
+            "formulahendry.code-runner",
+            "liangruliu.customize-toolbar",
+            "GitHub.copilot",
+            "GitHub.copilot-chat"
+        ],
+        "settings": {
+            // GLOBAL FLEET SETTINGS:
+            "files.autoSave": "afterDelay",
+            "editor.cursorSmoothCaretAnimation": "on",
+            "editor.hover.enabled": true,
+            "editor.hover.sticky": true,
+            "editor.hover.delay": 500,
+          
+            // EDITOR SETTINGS
+            "editor.fontFamily": "Jetbrains Mono",
+            "editor.fontSize": 16,
+            "terminal.integrated.fontFamily": "Jetbrains Mono",
+            "terminal.integrated.fontSize": 13,
+          
+            "editor.lineHeight": 1.7,
+            "editor.fontLigatures": true,
+            "editor.lineNumbers": "on",
+            "editor.guides.indentation": true,
+            "editor.autoClosingBrackets": "always",
+            "editor.autoClosingQuotes": "always",
+            "editor.autoIndent": "full",
+            "editor.formatOnType": true,
+            "editor.formatOnPaste": true,
+            "editor.formatOnSave": true,
+            "editor.wordWrap": "on",
+            "editor.wordWrapColumn": 80,
+            "editor.wrappingIndent": "same",
+            "editor.autoClosingComments": "always",
+            "editor.autoClosingDelete": "always",
+            "editor.autoClosingOvertype": "always",
+            "editor.cursorBlinking": "expand",
+            "editor.cursorSurroundingLinesStyle": "all",
+            "editor.cursorWidth": 2,
+            "editor.find.history": "never",
+            "editor.fontWeight": "500",
+            "editor.minimap.renderCharacters": false,
+            "editor.minimap.autohide": true,
+            "editor.minimap.maxColumn": 0,
+            "editor.inlineSuggest.fontFamily": "Jetbrains Mono",
+            "editor.quickSuggestions": {
+              "comments": "on",
+              "strings": "on"
+            },
+            "editor.suggest.filterGraceful": false,
+            "editor.suggest.matchOnWordStartOnly": false,
+            "editor.suggest.shareSuggestSelections": true,
+            "files.autoGuessEncoding": true,
+            "files.enableTrash": false,
+            "files.exclude": {
+              "**/.git": false
+            },
+            "files.insertFinalNewline": true,
+            "workbench.commandPalette.experimental.askChatLocation": "quickChat",
+            "workbench.commandPalette.experimental.suggestCommands": true,
+            "workbench.experimental.cloudChanges.autoStore": "onShutdown",
+            "workbench.externalBrowser": "\"X:\\Program Files\\Zen Browser\\zen.exe\"",
+            "workbench.hover.delay": 1000,
+            "workbench.reduceMotion": "off",
+            "workbench.statusBar.visible": false,
+            "workbench.tips.enabled": false,
+            "workbench.tree.stickyScrollMaxItemCount": 8,
+            "breadcrumbs.enabled": false,
+            "accessibility.underlineLinks": true,
+            "workbench.layoutControl.enabled": false,
+            "CustomizeToolbar.buttonConfig": [
+              {
+                "name": "Interactive Terminal",
+                "icon": "zap",
+                "command_terminal": "zen.exe"
+              },
+              {
+                "name": "Toggle Terminal",
+                "icon": {
+                  "light": "builtin/terminal_light.svg",
+                  "dark": "builtin/terminal_dark.svg"
+                },
+                "command_vscode": "workbench.action.terminal.toggleTerminal"
+              },
+              {
+                "name": "reload Window",
+                "icon": {
+                  "light": "builtin/save_dark.svg",
+                  "dark": "builtin/save_dark.svg"
+                },
+                "command_vscode": "workbench.action.reloadWindow"
+              }
+            ],
+            "workbench.colorTheme": "Catppuccin Macchiato",
+            "workbench.iconTheme": "vscode-jetbrains-icon-theme-2023-auto",
+            "editor.minimap.enabled": false,
+            "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+            "editor.unicodeHighlight.invisibleCharacters": false,
+            "window.menuBarVisibility": "compact",
+            "window.commandCenter": false,
+            "workbench.navigationControl.enabled": false,
+            "workbench.activityBar.location": "top",
+            "editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+            "terminal.integrated.env.windows": {},
+            "console-ninja.featureSet": "Community"
+          }
+          
+      }
+    }
+  }
+  
