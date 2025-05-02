@@ -6,6 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
+
+const checkEULA = () => {
+  if (document.cookie.includes("eula_accepted=false")) {
+    window.location.href = "/";
+  }
+}
+
 
 interface BotData {
   token: string;
@@ -15,6 +23,8 @@ interface BotData {
 }
 
 const ClientCustomizer = () => {
+  const router = useRouter();
+
   const [botData, setBotData] = useState<BotData>({
     token: "",
     guildID: "",
@@ -117,6 +127,15 @@ const ClientCustomizer = () => {
     }
   };
 
+  const handleTest = () => {
+    console.log("Test bot");
+    router.push("/test");
+  };
+
+  
+  useEffect(() => {
+    checkEULA();
+  }, []);
   return (
     <div className="flex justify-center items-center h-screen bg-black text-white p-4">
       <Card className="w-full max-w-md bg-gray-900 rounded-2xl shadow-lg p-6">
@@ -176,6 +195,10 @@ const ClientCustomizer = () => {
           <Button onClick={handleCompile} className="bg-gray-700 text-white flex-1">
             Compile
           </Button>
+        </div>
+        <div>
+          <Button onClick={handleTest} className="bg-gray-700 text-white flex-1">Test Bot</Button>
+
         </div>
 
         <div className="mt-6 p-4 bg-gray-800 rounded-lg">
