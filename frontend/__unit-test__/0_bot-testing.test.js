@@ -3,6 +3,7 @@ const { describe, it } = require("mocha");
 const { expect } = require("chai");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 
 const URL = "http://localhost:3000/api/bot/testing";
 
@@ -16,9 +17,11 @@ describe("Bot Testing API", function () {
   let mockedBotScript;
 
   beforeEach(function () {
-    // Create a temporary test file in the OUTPUT directory
-    mockedBotScript = path.join(process.cwd(), "OUTPUT", "test.py");
+    // Create a temporary test file in the system's temp directory
+    const tempDir = os.tmpdir();
+    mockedBotScript = path.join(tempDir, `test-${Date.now()}.py`);
     fs.writeFileSync(mockedBotScript, 'print("hello world")\n');
+    console.log(`Created test file at: ${mockedBotScript}`);
   });
 
   it("should start the script file, and kill it after a response is given", async function () {
@@ -44,6 +47,7 @@ describe("Bot Testing API", function () {
     // Delete the script file after each test
     if (fs.existsSync(mockedBotScript)) {
       fs.unlinkSync(mockedBotScript);
+      console.log(`Cleaned up test file: ${mockedBotScript}`);
     }
   });
 });
