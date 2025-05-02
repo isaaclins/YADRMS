@@ -66,7 +66,7 @@ export default function BotTester() {
         const data = await response.json();
         setScripts(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch script files");
+        setError(err instanceof Error ? err.message : "Failed to fetch script files. Please generate a script first.");
       }
     };
 
