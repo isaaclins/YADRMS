@@ -2,6 +2,7 @@ const axios = require("axios");
 const { describe, it } = require("mocha");
 const { expect } = require("chai");
 const fs = require("fs");
+const path = require("path");
 
 const URL = "http://localhost:3000/api/bot/testing";
 
@@ -12,6 +13,13 @@ const URL = "http://localhost:3000/api/bot/testing";
 
 describe("Bot Testing API", function () {
   this.timeout(10000);
+  let mockedBotScript;
+
+  beforeEach(function () {
+    // Create a temporary test file in the OUTPUT directory
+    mockedBotScript = path.join(process.cwd(), "OUTPUT", "test.py");
+    fs.writeFileSync(mockedBotScript, 'print("hello world")\n');
+  });
 
   it("should start the script file, and kill it after a response is given", async function () {
     const startResponse = await axios.post(URL, {
@@ -31,18 +39,11 @@ describe("Bot Testing API", function () {
     expect(stopResponse.status).to.equal(200);
     expect(stopResponse.data.success).to.be.true;
   });
-  beforeEach(function () {
-    const mockedBotScript = new File(
-      ["console.log('hello world')"],
-      "test.py",
-      {
-        type: "text/plain",
-      }
-    );
 
-    console.log(mockedBotScript);
-  });
-  afterEach(function () { // delete the script file after each test
-    fs.unlinkSync(mockedBotScript);
+  afterEach(function () {
+    // Delete the script file after each test
+    if (fs.existsSync(mockedBotScript)) {
+      fs.unlinkSync(mockedBotScript);
+    }
   });
 });
