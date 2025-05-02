@@ -37,3 +37,5 @@ frontend/browser/.tmp/auth_info.json
 python/settings.py
 node_modules/*
 .docusaurus/*
+backend/languages/python/components/done/__pycache__
+backend/settings/settings.json
