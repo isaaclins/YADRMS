@@ -38,9 +38,13 @@ const handleMissingLanguage = (res: NextApiResponse) => {
 const buildDirectoryPath = (language: string) =>
   path.join(process.cwd(), "..", "backend", "languages", language, "components", "done");
 
+
+// get the modules from the directory, but remove SPECIFICALLY __pycache__ from the modules
 const getModulesFromDirectory = (dirPath: string) => {
   const files = fs.readdirSync(dirPath);
-  return files.map((file) => file.replace(/\.[^/.]+$/, ""));
+  const modules = files.filter((file) => file !== "__pycache__");
+  return modules.map((file) => file.replace(/\.[^/.]+$/, ""));
+
 };
 
 const handleError = (res: NextApiResponse, error: any) => {
