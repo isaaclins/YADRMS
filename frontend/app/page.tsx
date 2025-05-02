@@ -13,12 +13,8 @@ export default function Home() {
   const router = useRouter();
   const [showEULA, setShowEULA] = useState(false);
 
-  /**
-   * @issue SaveEULAToCookie 
-   * @body Add a function to make it so when the user agrees to the EULA, it saves the agreement to a cookie.
-   * 
-   */
   const handleAgree = () => {
+    document.cookie = "eula_accepted=true; path=/";
     router.push("/BuilderUI");
   };
 

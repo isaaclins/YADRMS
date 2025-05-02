@@ -129,10 +129,10 @@ const ClientCustomizer = () => {
 
   const handleTest = () => {
     console.log("Test bot");
-    router.push("/test");
+    router.push("/BotTester");
   };
 
-  
+
   useEffect(() => {
     checkEULA();
   }, []);
