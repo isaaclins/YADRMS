@@ -9,9 +9,9 @@ import re
 # --- Setup output and settings paths ---
 date_str = datetime.now().strftime("%Y_%m_%d")
 script_dir = os.path.dirname(__file__)
-output_dir = os.path.join(script_dir, 'OUTPUT', date_str)
+output_dir = os.path.join(script_dir, '..', '..', '..', 'OUTPUT')
 os.makedirs(output_dir, exist_ok=True)
-client_script_path = os.path.join(output_dir, 'client.py')
+client_script_path = os.path.join(output_dir, date_str+'_client.py')
 settings_path = os.path.join(script_dir, '..', '..', 'settings', 'settings.json')
 
 print(f"[?] Settings path: {settings_path}")
