@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      exec("python ../backend/languages/python/builder.py", (error, stdout, stderr) => {
+      exec("python3 ../backend/languages/python/builder.py", (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           res.status(500).json({ message: "Compilation failed." });
