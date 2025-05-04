@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -49,9 +49,13 @@ const ClientCustomizer = () => {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [scripts, setScripts] = useState<ScriptFiles>({});
+  const [noScriptsFound, setNoScriptsFound] = useState(false);
   const [activeView, setActiveView] = useState<"customize" | "test">("customize");
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [compileSuccess, setCompileSuccess] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [isPollingLogs, setIsPollingLogs] = useState(false);
+  const logsEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const [botData, setBotData] = useState<BotData>({
@@ -82,24 +86,46 @@ const ClientCustomizer = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchScripts = async () => {
-      try {
-        console.log("Fetching script files");
-        const response = await fetch("/api/bot/get-all-scripts");
-        console.log("Response: ", response);
-        if (!response.ok) {
-          throw new Error("Failed to fetch script files. Please generate a script first.");
-        }
-        const data = await response.json();
-        setScripts(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch script files");
+  const fetchScripts = async () => {
+    try {
+      console.log("Fetching script files");
+      const response = await fetch("/api/bot/get-all-scripts");
+      console.log("Response: ", response);
+      if (!response.ok) {
+        throw new Error("Failed to fetch script files. Please generate a script first.");
       }
-    };
+      const data = await response.json();
+      setScripts(data);
+      
+      // Check if scripts were found
+      setNoScriptsFound(!data.scripts || data.scripts.length === 0);
+    } catch (err) {
+      console.error("Error fetching scripts:", err);
+      setError(err instanceof Error ? err.message : "Failed to fetch script files");
+      setNoScriptsFound(true);
+    }
+  };
 
+  useEffect(() => {
     fetchScripts();
   }, []);
+
+  // Auto-reload script files if none were found
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    if (noScriptsFound && activeView === "test") {
+      console.log("No scripts found, setting up auto-reload every 2 seconds");
+      intervalId = setInterval(fetchScripts, 2000);
+    }
+    
+    return () => {
+      if (intervalId) {
+        console.log("Clearing script reload interval");
+        clearInterval(intervalId);
+      }
+    };
+  }, [noScriptsFound, activeView]);
 
   const handleBotAction = async (action: "start" | "stop") => {
     if (!scriptFile) {
@@ -111,15 +137,25 @@ const ClientCustomizer = () => {
       setIsLoading(true);
       setError("");
       
+      console.log(`${action}ing bot with script: ${scriptFile}`);
+      
+      // Create request body with PID when stopping
+      const requestBody: any = {
+        script_file: scriptFile,
+        action: action
+      };
+      
+      // Include the PID when stopping
+      if (action === "stop" && pid) {
+        requestBody.pid = pid;
+      }
+      
       const response = await fetch("/api/bot/testing", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          script_file: scriptFile,
-          action: action
-        }),
+        body: JSON.stringify(requestBody),
       });
       
       const data = await response.json();
@@ -129,14 +165,24 @@ const ClientCustomizer = () => {
       }
       
       if (data.success) {
-        setBotStatus(action === "start" ? "running" : "stopped");
         if (action === "start") {
+          setBotStatus("running");
           setPid(data.pid);
-        } else {
+          setLogs([`Started bot with PID: ${data.pid}`]);
+          setIsPollingLogs(true);
+        } else if (action === "stop") {
+          setBotStatus("stopped");
+          // Don't clear the logs when stopping, just add a stop message
+          setLogs(prev => [...prev, `Bot stopped. ${data.message || ''}`]);
+          setIsPollingLogs(false);
           setPid(null);
         }
+      } else {
+        // The API returned success: false
+        throw new Error(data.error || `Unknown error when trying to ${action} bot`);
       }
     } catch (err) {
+      console.error(`Error during ${action} action:`, err);
       setError(err instanceof Error ? err.message : `Failed to ${action} bot`);
     } finally {
       setIsLoading(false);
@@ -231,6 +277,71 @@ const ClientCustomizer = () => {
   useEffect(() => {
     checkEULA();
   }, []);
+
+  // Clear logs but maintain process state
+  const handleClearLogs = () => {
+    setLogs([`Logs cleared. Bot ${botStatus === "running" ? "still running with PID: " + pid : "is stopped"}`]);
+  };
+
+  // Fetch logs periodically when the bot is running
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    const fetchLogs = async () => {
+      if (!pid || botStatus !== "running") return;
+      
+      try {
+        const response = await fetch(`/api/bot/logs?pid=${pid}`);
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Check if the process is still active
+          if (!data.active) {
+            console.log("Process is no longer active, stopping polling");
+            setBotStatus("stopped");
+            setIsPollingLogs(false);
+            setPid(null);
+            
+            // Add a message indicating the process exited
+            if (data.message) {
+              setLogs(prev => [...prev, data.message]);
+            }
+          }
+          
+          // Add any new logs
+          if (data.logs && data.logs.length > 0) {
+            setLogs(prev => [...prev, ...data.logs]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+        // If we can't fetch logs repeatedly, stop polling
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      }
+    };
+    
+    if (isPollingLogs && pid) {
+      // Poll for logs every second for more responsive updates
+      intervalId = setInterval(fetchLogs, 1000);
+      // Fetch logs immediately on start
+      fetchLogs();
+    }
+    
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [pid, botStatus, isPollingLogs]);
+
+  // Auto-scroll logs to bottom when they update
+  useEffect(() => {
+    if (logsEndRef.current) {
+      logsEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [logs]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-6">
@@ -425,77 +536,114 @@ const ClientCustomizer = () => {
         )}
         
         {activeView === "test" && (
-          <Card className="bg-gray-800/50 border-gray-700 rounded-xl shadow-lg backdrop-blur-sm overflow-hidden">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4 text-green-400">Bot Testing</h2>
-              <p className="text-sm text-gray-400 mb-4">
-                Test your bot with a compiled script
-              </p>
-              
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="script-select" className="text-sm font-medium">
-                    Script File
-                  </Label>
-                  <Select value={scriptFile} onValueChange={setScriptFile}>
-                    <SelectTrigger id="script-select" className="w-full bg-gray-900 border-gray-700">
-                      <SelectValue placeholder="Select a script file" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {scripts.scripts && scripts.scripts.length > 0 ? (
-                        scripts.scripts.map((file) => (
-                          <SelectItem key={file.path} value={file.path}>
-                            {file.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <SelectItem value="no-scripts" disabled>
-                          No scripts available
-                        </SelectItem>
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
+          <div className="space-y-6">
+            <Card className="bg-gray-800/50 border-gray-700 rounded-xl shadow-lg backdrop-blur-sm overflow-hidden">
+              <div className="p-6">
+                <h2 className="text-xl font-semibold mb-4 text-green-400">Bot Testing</h2>
+                <p className="text-sm text-gray-400 mb-4">
+                  Test your bot with a compiled script
+                </p>
                 
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-md text-xs font-bold ${
-                      botStatus === "running" 
-                        ? "bg-green-600 text-white" 
-                        : "bg-red-600 text-white"
-                    }`}>
-                      {botStatus.toUpperCase()}
-                    </span>
-                    {pid && <span className="text-xs border border-gray-700 px-2 py-1 rounded-md">PID: {pid}</span>}
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="script-select" className="text-sm font-medium">
+                      Script File
+                    </Label>
+                    <Select value={scriptFile} onValueChange={setScriptFile}>
+                      <SelectTrigger id="script-select" className="w-full bg-gray-900 border-gray-700">
+                        <SelectValue placeholder={noScriptsFound ? "Searching for scripts..." : "Select a script file"} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {scripts.scripts && scripts.scripts.length > 0 ? (
+                          scripts.scripts.map((file) => (
+                            <SelectItem key={file.path} value={file.path}>
+                              {file.name}
+                            </SelectItem>
+                          ))
+                        ) : (
+                          <SelectItem value="no-scripts" disabled>
+                            {noScriptsFound ? "Searching for scripts..." : "No scripts available"}
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {noScriptsFound && (
+                      <p className="text-xs text-amber-400 mt-1">
+                        No script files found. Auto-reloading every 2 seconds...
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${
+                        botStatus === "running" 
+                          ? "bg-green-600 text-white" 
+                          : "bg-red-600 text-white"
+                      }`}>
+                        {botStatus.toUpperCase()}
+                      </span>
+                      {pid && <span className="text-xs border border-gray-700 px-2 py-1 rounded-md">PID: {pid}</span>}
+                    </div>
+                  </div>
+                  
+                  {error && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <div className="flex justify-between gap-4">
+                    <Button
+                      onClick={() => handleBotAction("start")}
+                      disabled={isLoading || botStatus === "running" || !scriptFile}
+                      className="w-full bg-green-600 hover:bg-green-700"
+                    >
+                      {isLoading ? "Processing..." : "Start Bot"}
+                    </Button>
+                    <Button
+                      onClick={() => handleBotAction("stop")}
+                      disabled={isLoading || botStatus === "stopped" || !scriptFile}
+                      variant="destructive"
+                      className="w-full"
+                    >
+                      {isLoading ? "Processing..." : "Stop Bot"}
+                    </Button>
                   </div>
                 </div>
-                
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                
-                <div className="flex justify-between gap-4 mt-6">
-                  <Button
-                    onClick={() => handleBotAction("start")}
-                    disabled={isLoading || botStatus === "running" || !scriptFile}
-                    className="w-full bg-green-600 hover:bg-green-700"
+              </div>
+            </Card>
+
+            <Card className="bg-gray-800/50 border-gray-700 rounded-xl shadow-lg backdrop-blur-sm overflow-hidden">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-blue-400">Bot Logs</h2>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleClearLogs}
+                    className="text-xs"
                   >
-                    {isLoading ? "Processing..." : "Start Bot"}
-                  </Button>
-                  <Button
-                    onClick={() => handleBotAction("stop")}
-                    disabled={isLoading || botStatus === "stopped" || !scriptFile}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    {isLoading ? "Processing..." : "Stop Bot"}
+                    Clear Logs
                   </Button>
                 </div>
+                <div className="bg-gray-950 rounded-lg border border-gray-700 h-[300px] overflow-auto p-4 font-mono text-sm">
+                  {logs.length === 0 ? (
+                    <p className="text-gray-500 italic">No logs available. Start the bot to see output here.</p>
+                  ) : (
+                    <div className="space-y-1">
+                      {logs.map((log, index) => (
+                        <div key={index} className="break-all">
+                          <span className="text-gray-500">{index + 1}:</span> {log}
+                        </div>
+                      ))}
+                      <div ref={logsEndRef} />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         )}
       </div>
     </div>
