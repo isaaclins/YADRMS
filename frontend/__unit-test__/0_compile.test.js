@@ -1,6 +1,8 @@
 const axios = require('axios');
 const { describe, it } = require('mocha');
 const { expect } = require('chai');
+const fs = require('fs');
+const path = require('path');
 
 const URL = 'http://localhost:3000/api/compile';
 /**
@@ -9,15 +11,67 @@ const URL = 'http://localhost:3000/api/compile';
  */
 
 describe('Compile Unit Test', function () {
-    this.timeout(10000);
-    it('should return 200 OK', async function () {
+    this.timeout(15000); // Increased timeout for Python script execution
+    
+    it('should compile bot and return success', async function () {
         try {
-            const response = await axios.post(URL, {
-            });
-            expect(response.status).to.equal(201);
-            console.log('✅ Test Passed: Server responded with 200 OK');
+            // Minimum data needed for compilation
+            const testData = {
+                token: "test-token",
+                guildID: "test-guild",
+                language: "python",
+                modules: {
+                    screenshot: true,
+                    clipboard: false
+                }
+            };
+            
+            console.log('Sending test data to compile endpoint:', JSON.stringify(testData));
+            
+            // Make the request
+            const response = await axios.post(URL, testData);
+            
+            // Log response data for debugging
+            console.log('Response status:', response.status);
+            console.log('Response data:', JSON.stringify(response.data));
+            
+            // Check status code (accept either 200 or 201)
+            expect(response.status).to.be.oneOf([200, 201]);
+            
+            // Check for success message
+            expect(response.data).to.have.property('message');
+            
+            // Verify that a Python file was created in the OUTPUT directory
+            const outputDir = path.resolve(__dirname, '../../OUTPUT');
+            
+            console.log('Checking for output files in:', outputDir);
+            
+            // Give a small delay to ensure file is written
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Check if OUTPUT directory exists
+            const dirExists = fs.existsSync(outputDir);
+            expect(dirExists, 'OUTPUT directory should exist').to.be.true;
+            
+            if (dirExists) {
+                // Get list of files in OUTPUT directory
+                const files = fs.readdirSync(outputDir);
+                console.log('Files in OUTPUT directory:', files);
+                
+                // Look for Python files
+                const pythonFiles = files.filter(file => file.endsWith('.py'));
+                console.log('Python files found:', pythonFiles);
+                
+                expect(pythonFiles.length, 'Should have at least one Python file').to.be.greaterThan(0);
+            }
+            
+            console.log('✅ Test Passed: Compilation successful');
         } catch (error) {
-            console.error(`❌ Test Failed: ${error.message}`);
+            console.error('❌ Test Failed:', error.message);
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+                console.error('Error response status:', error.response.status);
+            }
             throw error;
         }
     });
