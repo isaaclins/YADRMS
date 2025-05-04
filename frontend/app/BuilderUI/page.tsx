@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { AlertDescription } from "@/components/ui/alert";
 import { Alert } from "@/components/ui/alert";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -66,6 +67,8 @@ const ClientCustomizer = () => {
   });
 
   const [languages, setLanguages] = useState<string[]>([]);
+
+  const [copiedLogs, setCopiedLogs] = useState(false);
 
   const fetchLanguages = async () => {
     try {
@@ -343,11 +346,27 @@ const ClientCustomizer = () => {
     }
   }, [logs]);
 
+  // Function to copy logs to clipboard
+  const handleCopyLogs = async () => {
+    if (logs.length === 0) return;
+    
+    try {
+      const logText = logs.map((log, index) => `${index + 1}: ${log}`).join('\n');
+      await navigator.clipboard.writeText(logText);
+      setCopiedLogs(true);
+      
+      // Reset copied status after 2 seconds
+      setTimeout(() => setCopiedLogs(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy logs:', err);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-6">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         <div className="flex flex-col space-y-2">
-          <h1 className="text-3xl font-bold text-white">YADRMS Builder</h1>
+          <h1 className="text-3xl font-bold text-white tracking-tight">YADRMS Builder</h1>
           <p className="text-gray-400">Customize, compile, and test your Discord bot</p>
         </div>
         
@@ -355,14 +374,14 @@ const ClientCustomizer = () => {
           <Button 
             onClick={() => setActiveView("customize")}
             variant={activeView === "customize" ? "default" : "outline"}
-            className="flex-1"
+            className={`flex-1 ${activeView === "customize" ? "bg-blue-600 hover:bg-blue-700" : ""}`}
           >
             Configure
           </Button>
           <Button 
             onClick={() => setActiveView("test")}
             variant={activeView === "test" ? "default" : "outline"}
-            className="flex-1"
+            className={`flex-1 ${activeView === "test" ? "bg-green-600 hover:bg-green-700" : ""}`}
           >
             Test Bot
           </Button>
@@ -576,19 +595,19 @@ const ClientCustomizer = () => {
                   
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 rounded-md text-xs font-bold ${
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                         botStatus === "running" 
                           ? "bg-green-600 text-white" 
                           : "bg-red-600 text-white"
                       }`}>
                         {botStatus.toUpperCase()}
                       </span>
-                      {pid && <span className="text-xs border border-gray-700 px-2 py-1 rounded-md">PID: {pid}</span>}
+                      {pid && <span className="text-xs bg-gray-800 border border-gray-700 px-3 py-1 rounded-full">PID: {pid}</span>}
                     </div>
                   </div>
                   
                   {error && (
-                    <Alert variant="destructive">
+                    <Alert variant="destructive" className="animate-in fade-in-50 duration-300">
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
@@ -597,7 +616,7 @@ const ClientCustomizer = () => {
                     <Button
                       onClick={() => handleBotAction("start")}
                       disabled={isLoading || botStatus === "running" || !scriptFile}
-                      className="w-full bg-green-600 hover:bg-green-700"
+                      className="w-full bg-green-600 hover:bg-green-700 transition-colors duration-200"
                     >
                       {isLoading ? "Processing..." : "Start Bot"}
                     </Button>
@@ -605,7 +624,7 @@ const ClientCustomizer = () => {
                       onClick={() => handleBotAction("stop")}
                       disabled={isLoading || botStatus === "stopped" || !scriptFile}
                       variant="destructive"
-                      className="w-full"
+                      className="w-full transition-colors duration-200"
                     >
                       {isLoading ? "Processing..." : "Stop Bot"}
                     </Button>
@@ -618,23 +637,45 @@ const ClientCustomizer = () => {
               <div className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold text-blue-400">Bot Logs</h2>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleClearLogs}
-                    className="text-xs"
-                  >
-                    Clear Logs
-                  </Button>
+                  <div className="flex space-x-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleCopyLogs}
+                            disabled={logs.length === 0}
+                            className={`text-xs transition-colors duration-200 ${copiedLogs ? 'bg-green-800 text-white border-green-700' : ''}`}
+                          >
+                            {copiedLogs ? "Copied!" : "Copy Logs"}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Copy logs to clipboard</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleClearLogs}
+                      className="text-xs"
+                    >
+                      Clear Logs
+                    </Button>
+                  </div>
                 </div>
-                <div className="bg-gray-950 rounded-lg border border-gray-700 h-[300px] overflow-auto p-4 font-mono text-sm">
+                <div className="bg-gray-950 rounded-lg border border-gray-700 h-[300px] overflow-auto p-4 font-mono text-sm shadow-inner">
                   {logs.length === 0 ? (
-                    <p className="text-gray-500 italic">No logs available. Start the bot to see output here.</p>
+                    <p className="text-gray-500 italic flex items-center justify-center h-full">No logs available. Start the bot to see output here.</p>
                   ) : (
                     <div className="space-y-1">
                       {logs.map((log, index) => (
-                        <div key={index} className="break-all">
-                          <span className="text-gray-500">{index + 1}:</span> {log}
+                        <div key={index} className="break-all group">
+                          <span className="text-gray-500 mr-2 tabular-nums">{index + 1}:</span> 
+                          <span className="group-hover:text-white transition-colors duration-200">{log}</span>
                         </div>
                       ))}
                       <div ref={logsEndRef} />
