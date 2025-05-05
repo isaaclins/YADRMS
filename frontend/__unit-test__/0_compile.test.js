@@ -28,15 +28,8 @@ describe("Compile Unit Test", function () {
 
   it("should compile bot and return success", async function () {
     try {
-
-
-      console.log(
-        "Sending test data to compile endpoint:",
-        JSON.stringify(testData)
-      );
-
       // Make the request
-      const response = await axios.post(URL, testData);
+      const response = await axios.post(URL);
 
       // Log response data for debugging
       console.log("Response status:", response.status);
