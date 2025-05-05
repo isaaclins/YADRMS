@@ -10,26 +10,31 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      // Get the absolute path to the builder script
+      // Get the absolute path to the builder script and settings
       const rootDir = process.cwd();
-      const builderPath = path.resolve(
-        rootDir,
-        "../backend/languages/python/builder.py"
-      );
-      const settingsPath = path.resolve(
-        rootDir,
-        "../backend/settings/settings.json"
-      );
-
-      // Make sure the builder script exists
-      if (!fs.existsSync(builderPath)) {
-        console.error(`Builder script not found at: ${builderPath}`);
+      
+      // Try multiple possible paths for files
+      const possibleBuilderPaths = [
+        path.resolve(rootDir, "../backend/languages/python/builder.py"),
+        path.resolve(rootDir, "backend/languages/python/builder.py")
+      ];
+      
+      const possibleSettingsPaths = [
+        path.resolve(rootDir, "../backend/settings/settings.json"),
+        path.resolve(rootDir, "backend/settings/settings.json")
+      ];
+      
+      // Find the first valid builder path
+      const builderPath = possibleBuilderPaths.find(p => fs.existsSync(p));
+      if (!builderPath) {
+        console.error(`Builder script not found at any of these paths: ${possibleBuilderPaths.join(', ')}`);
         return res.status(404).json({ message: "Builder script not found" });
       }
-
-      // Make sure the settings file exists
-      if (!fs.existsSync(settingsPath)) {
-        console.error(`Settings file not found at: ${settingsPath}`);
+      
+      // Find the first valid settings path
+      const settingsPath = possibleSettingsPaths.find(p => fs.existsSync(p));
+      if (!settingsPath) {
+        console.error(`Settings file not found at any of these paths: ${possibleSettingsPaths.join(', ')}`);
         return res.status(404).json({ message: "Settings file not found" });
       }
 
@@ -49,7 +54,9 @@ export default async function handler(
       });
     } catch (error) {
       console.error(error);
-      res.status(400).json({ message: "" });
+      res.status(400).json({ message: "An error occurred during compilation" });
     }
+  } else {
+    res.status(405).json({ message: "Method not allowed" });
   }
 }

@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { describe, it } = require("mocha");
+const { describe, it, before } = require("mocha");
 const { expect } = require("chai");
 const fs = require("fs");
 const path = require("path");
@@ -25,6 +25,29 @@ console.log(`${colors.blue}================================${colors.reset}`);
 
 describe("Compile Unit Test", function () {
   this.timeout(15000); // Increased timeout for Python script execution
+  
+  before(function() {
+    // Set up test environment
+    
+    // 1. Ensure OUTPUT directory exists
+    const outputDir = path.resolve(__dirname, "../../OUTPUT");
+    if (!fs.existsSync(outputDir)) {
+      console.log(`Creating OUTPUT directory at: ${outputDir}`);
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
+    // 2. Ensure settings.json exists
+    const rootDir = process.cwd();
+    const settingsDir = path.resolve(rootDir, "backend/settings");
+    const settingsPath = path.resolve(settingsDir, "settings.json");
+    const exampleSettingsPath = path.resolve(settingsDir, "example.settings.json");
+    
+    if (!fs.existsSync(settingsPath) && fs.existsSync(exampleSettingsPath)) {
+      console.log(`Copying example settings to settings.json at: ${settingsPath}`);
+      const exampleSettings = fs.readFileSync(exampleSettingsPath, 'utf8');
+      fs.writeFileSync(settingsPath, exampleSettings);
+    }
+  });
 
   it("should compile bot and return success", async function () {
     try {
@@ -44,7 +67,7 @@ describe("Compile Unit Test", function () {
       console.log("Checking for output files in:", outputDir);
 
       // Give a small delay to ensure file is written
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Increased delay
 
       // Check if OUTPUT directory exists
       const dirExists = fs.existsSync(outputDir);
