@@ -1,66 +1,92 @@
-# YetAnotherDiscordRemoteManagementSoftware
-### **IMPORTANT – READ CAREFULLY:**
+# YADRMS (Yet Another Discord Remote Management Software)
 
-# **By installing, copying, or otherwise using this Software, you agree that you have read the [`EULA`](/EULA.md)**
+## Overview
 
-Please read the following document before editing code:
--   [`How-To-Code.md`](./How-To-Code.md) 
+YADRMS is a Discord-based remote management system that allows users to monitor and control machines remotely through a Discord bot. The project consists of two main components:
 
+1. **Frontend**: A Next.js web application that provides a UI for configuring, building, and testing the Discord bot
+2. **Backend**: Python scripts that generate client-side code to be deployed on target machines
 
-## Description
+## Features
 
-YADRMS is a work-in-progress project aimed at creating a custom remote desktop application infrastructure and automating tasks from multiple clients using a single Discord server. This project is built using Python for the backend and Next.js for the frontend.
+- **Discord Bot Integration**: Control remote machines through Discord commands
+- **Dynamic Client Generation**: Generate customized Python client scripts with selected modules
+- **Real-time Bot Testing**: Test bots directly from the web UI
+- **Module System**: Extensible module system for adding custom functionality
+- **Multi-language Support**: Infrastructure for supporting multiple programming languages (currently focused on Python)
 
-## Current Features
+## Architecture
 
-### Repository Features
-- **Automated Dependency Management**:  
-    -   Uses Renovate to automatically scan for and update dependencies.
-- **CI/CD Pipelines**: 
-    -   Utilizes GitHub Actions for continuous integration and deployment.
+### Frontend (Next.js)
 
-### Application Features
-- **Channel Management**: 
-    -   Creates and manages text channels based on unique Client MAC addresses.
-- **Discord Bot Integration**: 
-    -   Integrates with Discord to manage Clients and handle messages using the Discord API.
-- **Dynamic Client Script Generation**: 
-    -   Generates and manages the **client** [`(main.py)`](/backend/languages/python/main.py) script dynamically based on settings and modules.
+- **UI Components**: Built with ShadCN UI and Tailwind CSS
+- **API Routes**: RESTful endpoints for communication with backend
+- **Pages**:
+  - Home: EULA acceptance page
+  - BuilderUI: Main interface for configuring and testing bots
 
-## Maintenance
+### Backend (Python)
 
-Maintaining the project is very easy and needs no coding! I've implemented Renovate into this project, meaning that it will scan for a newer version of an installed dependency (package.json) and will create a Pull Request automatically. This ensures that all dependencies are always up-to-date with minimal manual intervention.
+- **Builder Script**: Generates the client script based on settings
+- **Component System**: Modular components that can be included in the client script
+- **Settings**: JSON configuration for bot tokens, guild IDs, and modules
 
-### Steps for Maintenance
-1. **Review Renovate PRs**: Regularly check the Pull Requests created by Renovate.
-2. **Monitor CI/CD**: Ensure that the CI/CD pipelines run successfully BEFORE merging the PRs. If everything is green, then merge!
-3. **Merge PRs**: After reviewing and testing, merge the PRs to keep dependencies updated.
+## API Endpoints
 
-By following these steps, you can ensure that the project remains up-to-date and secure with the latest dependency versions.
+| Endpoint                   | Method | Description                                          |
+| -------------------------- | ------ | ---------------------------------------------------- |
+| `/api/compile`             | POST   | Compiles the client script using the backend builder |
+| `/api/save-settings`       | POST   | Saves bot configuration settings                     |
+| `/api/modules`             | POST   | Gets available modules for a specified language      |
+| `/api/languages`           | GET    | Gets list of supported programming languages         |
+| `/api/bot/testing`         | POST   | Starts or stops a bot for testing                    |
+| `/api/bot/logs`            | GET    | Gets logs from a running bot                         |
+| `/api/bot/get-all-scripts` | GET    | Gets a list of all generated scripts                 |
 
-## Pipelines
+## How It Works
 
+1. User configures bot settings through the BuilderUI (Discord token, guild ID, modules)
+2. User saves settings and compiles the client script
+3. The Python builder script generates a client script with the selected modules
+4. User can test the bot directly from the UI or deploy the generated script on a target machine
+5. The Discord bot establishes a connection to the specified Discord server
+6. Commands can be issued through Discord to control the remote machine
 
-This project uses GitHub Actions for CI/CD. The workflows are defined in the [workflows](http://_vscodecontentref_/4) directory.
+## Security Considerations
 
-- **Create Issue from Code Annotations**: Automatically creates GitHub issues from code annotations.
-    - Workflow file: [code-to-issue-and-branch.yml](/.github/workflows/code-to-issue-and-branch.yml)
-    - Triggers on: [push](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/code-to-issue-and-branch.yml#L3)
-    - Steps:
-        - [Checkout repository](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/code-to-issue-and-branch.yml#L12-L15)
-        - [Extract annotations and create issues](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/code-to-issue-and-branch.yml#L17-L133)
+This software is intended for educational and experimental purposes only. As stated in the EULA:
 
-- **Update Changelog**: Updates the changelog with the latest commit messages.
-    - Workflow file: [update-changelog.yaml](/.github/workflows/update-changelog.yaml)
-    - Triggers on: [push to `code` branch](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L3-L6)
-    - Steps:
-        - [Checkout repository](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L13-L16)
-        - [Get latest commit message](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L18-L37)
-        - [Change branch and save commit messages](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L39-L42)
-        - [Commit and push changes](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L44-L50)
-        - [Trigger pages workflow](https://github.com/isaaclins/YADRMS/blob/code/.github/workflows/update-changelog.yaml#L52-L58)
+- Use only on systems you own or have permission to use
+- Not intended for production use
+- May contain security vulnerabilities
+- User assumes all responsibility for consequences
 
+## Getting Started
+
+1. Clone the repository
+2. Run `cd frontend && npm install` to install dependencies
+3. Create a Discord bot and obtain a token
+4. Configure bot settings in the BuilderUI
+5. Compile the client script
+6. Test or deploy the generated script
+
+## Development
+
+### Running the Application
+
+```bash
+# Start the frontend development server
+cd frontend
+npm run dev
+```
+
+### Project Structure
+
+- `/frontend`: Next.js web application
+- `/backend`: Python backend for script generation
+- `/OUTPUT`: Generated client scripts
+- `/.github`: CI/CD workflows
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the terms of the EULA included in the repository.
