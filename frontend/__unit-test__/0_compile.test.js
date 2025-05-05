@@ -26,29 +26,6 @@ console.log(`${colors.blue}================================${colors.reset}`);
 describe("Compile Unit Test", function () {
   this.timeout(15000); // Increased timeout for Python script execution
   
-  before(function() {
-    // Set up test environment
-    
-    // 1. Ensure OUTPUT directory exists
-    const outputDir = path.resolve(__dirname, "../../OUTPUT");
-    if (!fs.existsSync(outputDir)) {
-      console.log(`Creating OUTPUT directory at: ${outputDir}`);
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-    
-    // 2. Ensure settings.json exists
-    const rootDir = process.cwd();
-    const settingsDir = path.resolve(rootDir, "backend/settings");
-    const settingsPath = path.resolve(settingsDir, "settings.json");
-    const exampleSettingsPath = path.resolve(settingsDir, "example.settings.json");
-    
-    if (!fs.existsSync(settingsPath) && fs.existsSync(exampleSettingsPath)) {
-      console.log(`Copying example settings to settings.json at: ${settingsPath}`);
-      const exampleSettings = fs.readFileSync(exampleSettingsPath, 'utf8');
-      fs.writeFileSync(settingsPath, exampleSettings);
-    }
-  });
-
   it("should compile bot and return success", async function () {
     try {
       // Make the request
