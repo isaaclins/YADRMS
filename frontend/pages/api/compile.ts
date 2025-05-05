@@ -18,7 +18,7 @@ export default async function handler(
       );
       const settingsPath = path.resolve(
         rootDir,
-        "backend/settings/settings.json"
+        "../backend/settings/settings.json"
       );
 
       // Make sure the builder script exists
