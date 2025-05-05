@@ -42,9 +42,9 @@ backend/settings/settings.json
 
 # Node.js dependencies
 node_modules/
-npm-debug.log
-yarn-debug.log
-yarn-error.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 package-lock.json
 
 # Next.js build artifacts
@@ -96,9 +96,6 @@ OUTPUT/
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Testing
 coverage/
