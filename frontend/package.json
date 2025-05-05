@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "concurrently --kill-others --success first \"npm run dev\" \"wait-on http://localhost:3000 && npx mocha __unit-test__/*.js\""
+    "test:local": "concurrently --kill-others --success first \"npm install && npm run dev\" \"wait-on http://localhost:3000 && npx mocha __unit-test__/*.js\"",
+    "test:singlefile": "npm run dev & wait-on http://localhost:3000 && npx mocha"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.0",
