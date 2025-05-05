@@ -16,7 +16,6 @@ export default async function handler(
             res.status(500).json({ message: "Compilation failed." });
             return;
           }
-          console.log(`stdout: ${stdout}`);
           console.error(`stderr: ${stderr}`);
           res.status(201).json({ message: "Compilation started." });
         }

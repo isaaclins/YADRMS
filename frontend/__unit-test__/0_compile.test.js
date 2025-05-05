@@ -11,60 +11,33 @@ const URL = "http://localhost:3000/api/compile";
  */
 // Add colors for better visual output
 const colors = {
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  cyan: '\x1b[36m',
-  reset: '\x1b[0m',
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  cyan: "\x1b[36m",
+  reset: "\x1b[0m",
 };
 
 console.log(`${colors.blue}================================${colors.reset}`);
 console.log(`${colors.cyan}🧪 Compile Unit Test${colors.reset}`);
-console.log(`${colors.blue}================================${colors.reset}`);      
+console.log(`${colors.blue}================================${colors.reset}`);
 
 describe("Compile Unit Test", function () {
   this.timeout(15000); // Increased timeout for Python script execution
-  
+
   it("should compile bot and return success", async function () {
     try {
-      // Make the request
       const response = await axios.post(URL);
-
-      // Log response data for debugging
-      console.log("Response status:", response.status);
-      console.log("Response data:", JSON.stringify(response.data));
-
-      // Check status code (accept either 200 or 201)
       expect(response.status).to.be.oneOf([200, 201]);
-
-      // Verify that a Python file was created in the OUTPUT directory
       const outputDir = path.resolve(__dirname, "../../OUTPUT");
-
-      console.log("Checking for output files in:", outputDir);
-
-      // Give a small delay to ensure file is written
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Increased delay
-
-      // Check if OUTPUT directory exists
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const dirExists = fs.existsSync(outputDir);
-      expect(dirExists, "OUTPUT directory should exist").to.be.true;
-
       if (dirExists) {
-        // Get list of files in OUTPUT directory
         const files = fs.readdirSync(outputDir);
-        console.log("Files in OUTPUT directory:", files);
-
-        // Look for Python files
         const pythonFiles = files.filter((file) => file.endsWith(".py"));
-        console.log("Python files found:", pythonFiles);
-
-        expect(
-          pythonFiles.length,
-          "Should have at least one Python file"
-        ).to.be.greaterThan(0);
+        expect(pythonFiles.length).to.be.greaterThan(0);
       }
-
       console.log("✅ Test Passed: Compilation successful");
     } catch (error) {
       console.error("❌ Test Failed:", error.message);
