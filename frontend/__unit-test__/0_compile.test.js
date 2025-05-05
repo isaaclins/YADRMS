@@ -4,12 +4,14 @@ const { expect } = require("chai");
 const fs = require("fs");
 const path = require("path");
 
+// it should first check if the OUTPUT directory exists, if not, stop and return an error
+// it should then check if the settings.json file exists, if not, stop and return an error
+// it should then make a post request to the compile endpoint
+// it should then check if a python file was created in the OUTPUT directory
+// it should then return a 200 status code
+
 const URL = "http://localhost:3000/api/compile";
-/**
- * @issue compile unit test
- * @body add a working compile unit test that tests if when a post request is sent to the compile endpoint, it creates a python file and returns a 200 status code. make sure to CHECK for the python file.
- */
-// Add colors for better visual output
+
 const colors = {
   red: "\x1b[31m",
   green: "\x1b[32m",
@@ -24,28 +26,31 @@ console.log(`${colors.cyan}🧪 Compile Unit Test${colors.reset}`);
 console.log(`${colors.blue}================================${colors.reset}`);
 
 describe("Compile Unit Test", function () {
-  this.timeout(15000); // Increased timeout for Python script execution
+  it("should check if the OUTPUT directory exists", function () {
+    const dirExists = fs.existsSync(path.join(__dirname, "..", "..", "OUTPUT"));
+    expect(dirExists, "OUTPUT directory should exist").to.be.true;
+  });
+  it("should check if the settings.json file exists", function () {
+    const fileExists = fs.existsSync(
+      path.join(__dirname, "..", "..", "backend", "settings", "settings.json")
+    );
+    expect(fileExists, "settings.json file should exist").to.be.true;
+  });
+  it("should make a post request to the compile endpoint", async function () {
+    const response = await axios.post(URL);
+    expect(response.status).to.equal(201);
+  });
 
-  it("should compile bot and return success", async function () {
-    try {
-      const response = await axios.post(URL);
-      expect(response.status).to.be.oneOf([200, 201]);
-      const outputDir = path.resolve(__dirname, "../../OUTPUT");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      const dirExists = fs.existsSync(outputDir);
-      if (dirExists) {
-        const files = fs.readdirSync(outputDir);
-        const pythonFiles = files.filter((file) => file.endsWith(".py"));
-        expect(pythonFiles.length).to.be.greaterThan(0);
-      }
-      console.log("✅ Test Passed: Compilation successful");
-    } catch (error) {
-      console.error("❌ Test Failed:", error.message);
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-      }
-      throw error;
-    }
+  it("should check if a Python file was created in the OUTPUT directory", function () {
+    const outputDir = path.join(__dirname, "..", "..", "OUTPUT");
+    const pythonFiles = fs
+      .readdirSync(outputDir)
+      .filter((file) => file.endsWith(".py"));
+
+    // Check if any Python file exists in the OUTPUT directory
+    expect(
+      pythonFiles.length > 0,
+      "A Python file should exist in the OUTPUT directory"
+    ).to.be.true;
   });
 });
