@@ -5,7 +5,7 @@
   "scripts": {
     "setup": "npm install && next dev",
     "dev": "next dev --turbopack",
-    "test:local": "concurrently --kill-others --success first \"npm install && npm run dev\" \"wait-on http://localhost:3000 && npx mocha __unit-test__/*.js\"",
+    "test:local": "npm install && cross-env NODE_ENV=test node __unit-test__/run-tests.js",
     "test:singlefile": "npm run dev & wait-on http://localhost:3000 && npx mocha"
   },
   "main": "main.js",
@@ -60,6 +60,7 @@
     "@types/react-dom": "^19.0.0",
     "chai": "^4.3.7",
     "concurrently": "^9.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^9.0.0",
     "eslint-config-next": "15.3.1",
     "jest": "^29.7.0",

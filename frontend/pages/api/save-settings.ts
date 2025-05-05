@@ -14,9 +14,17 @@ export default async function handler(
     // Get the bot data from the request body
     const botData = req.body;
     
+    // Check for test flag to simulate server error
+    if (botData._causeError) {
+      throw new Error("Simulated server error for testing");
+    }
+    
     // Make sure we have the required fields
     if (!botData || !botData.token || !botData.guildID) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ 
+        message: "Missing required fields",
+        details: "Request must include token and guildID fields"
+      });
     }
     
     // Get the absolute path to the settings file
@@ -36,6 +44,7 @@ export default async function handler(
     // Write the settings file
     fs.writeFileSync(settingsPath, JSON.stringify(botData, null, 2));
     
+    console.log("Settings saved to", settingsPath);
     return res.status(200).json({ message: "Settings saved successfully" });
   } catch (error) {
     console.error("Error saving settings:", error);

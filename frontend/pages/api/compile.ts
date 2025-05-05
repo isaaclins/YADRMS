@@ -17,11 +17,45 @@ export default async function handler(
     const rootDir = process.cwd();
     const builderPath = path.resolve(rootDir, "../backend/languages/python/builder.py");
     const outputDir = path.resolve(rootDir, "../OUTPUT");
+    const settingsPath = path.resolve(rootDir, "../backend/settings/settings.json");
     
     // Ensure the OUTPUT directory exists
     if (!fs.existsSync(outputDir)) {
       console.log(`Creating OUTPUT directory at ${outputDir}`);
       fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
+    // Save request data to settings.json
+    try {
+      // Make sure the settings directory exists
+      const settingsDir = path.dirname(settingsPath);
+      if (!fs.existsSync(settingsDir)) {
+        fs.mkdirSync(settingsDir, { recursive: true });
+      }
+      
+      // Process modules to handle both "modules" and "Modules" formats
+      const modules = req.body.modules || {};
+      
+      // Prepare settings object
+      const settingsData = {
+        token: req.body.token || "dummy-token",
+        guildID: req.body.guildID || "dummy-guild",
+        language: req.body.language || "python",
+        modules: modules,
+        // Also include a Modules key for compatibility with different case formats
+        Modules: modules
+      };
+      
+      // Write the settings file with request data
+      fs.writeFileSync(settingsPath, JSON.stringify(settingsData, null, 2));
+      
+      console.log(`Settings saved to ${settingsPath}`);
+    } catch (error) {
+      console.error(`Error saving settings: ${error}`);
+      return res.status(500).json({ 
+        message: "Failed to save settings", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
     }
     
     // Log the paths for debugging

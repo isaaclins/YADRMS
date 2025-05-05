@@ -11,6 +11,19 @@ const URL = "http://localhost:3000/api/bot/testing";
 
 // it should first create the script file that just console logs hello world before running the tests BEFORE EACH TEST
 // then it should 1. start the bot 2. stop the bot 3. delete the script file and try with a non existent file
+// Add colors for better visual output
+const colors = {
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+  reset: '\x1b[0m',
+};
+
+console.log(`${colors.blue}================================${colors.reset}`);
+console.log(`${colors.cyan}🧪 Bot Testing API${colors.reset}`);
+console.log(`${colors.blue}================================${colors.reset}`);      
 
 describe("Bot Testing API", function () {
   this.timeout(10000);
