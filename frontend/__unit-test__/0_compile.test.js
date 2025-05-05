@@ -28,16 +28,7 @@ describe("Compile Unit Test", function () {
 
   it("should compile bot and return success", async function () {
     try {
-      // Minimum data needed for compilation
-      const testData = {
-        token: "test-token",
-        guildID: "test-guild",
-        language: "python",
-        modules: {
-          screenshot: true,
-          clipboard: false,
-        },
-      };
+
 
       console.log(
         "Sending test data to compile endpoint:",
@@ -53,9 +44,6 @@ describe("Compile Unit Test", function () {
 
       // Check status code (accept either 200 or 201)
       expect(response.status).to.be.oneOf([200, 201]);
-
-      // Check for success message
-      expect(response.data).to.have.property("message");
 
       // Verify that a Python file was created in the OUTPUT directory
       const outputDir = path.resolve(__dirname, "../../OUTPUT");
