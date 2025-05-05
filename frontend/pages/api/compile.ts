@@ -14,11 +14,11 @@ export default async function handler(
       const rootDir = process.cwd();
       const builderPath = path.resolve(
         rootDir,
-        "../backend/languages/python/builder.py"
+        "backend/languages/python/builder.py"
       );
       const settingsPath = path.resolve(
         rootDir,
-        "../backend/settings/settings.json"
+        "backend/settings/settings.json"
       );
 
       // Make sure the builder script exists
